@@ -118,11 +118,11 @@ const LeftSideMenuItems = ({
 
   const handleSelectTonTV = useLastCallback(() => {
     // Open TonTV TMA
-    openUrl({ url: "https://t.me/tontv_official_bot/app" });
+    openUrl({ url: "https://t.me/tontv_official_bot/app", shouldSkipModal: true });
   });
   const handleSelectAppStore = useLastCallback(() => {
     // Open AppStore TMA
-    openUrl({ url: "https://t.me/tongram_app_dev_bot/appcenter" });
+    openUrl({ url: "https://t.me/Tongram_center_bot/Tongram_Apps_Center", shouldSkipModal: true });
   });
 
   const handleSelectSaved = useLastCallback(() => {
