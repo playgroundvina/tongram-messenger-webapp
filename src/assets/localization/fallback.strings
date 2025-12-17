@@ -1412,6 +1412,10 @@
 "MenuBetaChangelog" = "Beta Changelog";
 "MenuSwitchToK" = "Switch to K Version";
 "MenuInstallApp" = "Install App";
+"MenuTonWallet" = "Ton Wallet";
+"MenuAITony" = "AI Tony";
+"MenuCexEchange" = "CEX Exchange";
+"MenuP2PExchange" = "P2P Exchange";
 "MenuMyProfile" = "My Profile";
 "MenuSavedMessages" = "Saved Messages";
 "MenuArchivedChats" = "Archived Chats";
