@@ -1205,6 +1205,10 @@ export interface LangPair {
   'MenuBetaChangelog': undefined;
   'MenuSwitchToK': undefined;
   'MenuInstallApp': undefined;
+  'MenuTonWallet': undefined;
+  'MenuAITony': undefined;
+  'MenuCexEchange': undefined;
+  'MenuP2PExchange': undefined;
   'MenuMyProfile': undefined;
   'MenuSavedMessages': undefined;
   'MenuArchivedChats': undefined;

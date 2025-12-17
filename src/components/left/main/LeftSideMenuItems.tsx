@@ -1,10 +1,10 @@
-import type React from "../../../lib/teact/teact";
-import { memo, useMemo } from "../../../lib/teact/teact";
-import { getActions, withGlobal } from "../../../global";
+import type React from '../../../lib/teact/teact';
+import { memo, useMemo } from '../../../lib/teact/teact';
+import { getActions, withGlobal } from '../../../global';
 
-import type { ApiUser } from "../../../api/types";
-import type { GlobalState } from "../../../global/types";
-import type { AnimationLevel, ThemeKey } from "../../../types";
+import type { ApiUser } from '../../../api/types';
+import type { GlobalState } from '../../../global/types';
+import type { AnimationLevel, ThemeKey } from '../../../types';
 
 import {
   ANIMATION_LEVEL_MAX,
@@ -16,37 +16,41 @@ import {
   IS_TEST,
   PRODUCTION_HOSTNAME,
   WEB_VERSION_BASE,
-} from "../../../config";
+} from '../../../config';
 import {
   INITIAL_PERFORMANCE_STATE_MAX,
   INITIAL_PERFORMANCE_STATE_MED,
   INITIAL_PERFORMANCE_STATE_MIN,
-} from "../../../global/initialState";
+} from '../../../global/initialState';
 import {
   selectTabState,
   selectTheme,
   selectUser,
-} from "../../../global/selectors";
-import { selectPremiumLimit } from "../../../global/selectors/limits";
-import { selectSharedSettings } from "../../../global/selectors/sharedState";
-import { IS_MULTIACCOUNT_SUPPORTED } from "../../../util/browser/globalEnvironment";
-import { IS_TAURI } from "../../../util/browser/globalEnvironment";
-import { getPromptInstall } from "../../../util/installPrompt";
-import { switchPermanentWebVersion } from "../../../util/permanentWebVersion";
+} from '../../../global/selectors';
+import { selectPremiumLimit } from '../../../global/selectors/limits';
+import { selectSharedSettings } from '../../../global/selectors/sharedState';
+import { IS_MULTIACCOUNT_SUPPORTED } from '../../../util/browser/globalEnvironment';
+import { IS_TAURI } from '../../../util/browser/globalEnvironment';
+import { getPromptInstall } from '../../../util/installPrompt';
+import { switchPermanentWebVersion } from '../../../util/permanentWebVersion';
 
-import { useFolderManagerForUnreadCounters } from "../../../hooks/useFolderManager";
-import useLang from "../../../hooks/useLang";
-import useLastCallback from "../../../hooks/useLastCallback";
+import { useFolderManagerForUnreadCounters } from '../../../hooks/useFolderManager';
+import useLang from '../../../hooks/useLang';
+import useLastCallback from '../../../hooks/useLastCallback';
 
-import AttachBotItem from "../../middle/composer/AttachBotItem";
-import MenuItem from "../../ui/MenuItem";
-import MenuSeparator from "../../ui/MenuSeparator";
-import Switcher from "../../ui/Switcher";
-import Toggle from "../../ui/Toggle";
-import AccountMenuItems from "./AccountMenuItems";
+import AttachBotItem from '../../middle/composer/AttachBotItem';
+import MenuItem from '../../ui/MenuItem';
+import MenuSeparator from '../../ui/MenuSeparator';
+import Switcher from '../../ui/Switcher';
+import Toggle from '../../ui/Toggle';
+import AccountMenuItems from './AccountMenuItems';
 
-import tonTVIcon from '../../../assets/tontv.svg';
 import appStoreIcon from '../../../assets/app_store.svg';
+import CEXIcon from '../../../assets/cex.svg';
+import P2PIcon from '../../../assets/p2p.svg';
+import AITonyIcon from '../../../assets/robo.svg';
+import tonTVIcon from '../../../assets/tontv.svg';
+import tonWalletIcon from '../../../assets/tonWallet.svg';
 
 type OwnProps = {
   onSelectSettings: NoneToVoidFunction;
@@ -61,9 +65,9 @@ type StateProps = {
   currentUser?: ApiUser;
   theme: ThemeKey;
   canInstall?: boolean;
-  attachBots: GlobalState["attachMenu"]["bots"];
+  attachBots: GlobalState['attachMenu']['bots'];
   accountsTotalLimit: number;
-} & Pick<GlobalState, "currentUserId" | "archiveSettings">;
+} & Pick<GlobalState, 'currentUserId' | 'archiveSettings'>;
 
 const LeftSideMenuItems = ({
   currentUserId,
@@ -93,9 +97,9 @@ const LeftSideMenuItems = ({
   const animationLevelValue =
     animationLevel !== ANIMATION_LEVEL_MIN
       ? animationLevel === ANIMATION_LEVEL_MAX
-        ? "max"
-        : "mid"
-      : "min";
+        ? 'max'
+        : 'mid'
+      : 'min';
 
   const withOtherVersions =
     !IS_TAURI && (window.location.hostname === PRODUCTION_HOSTNAME || IS_TEST);
@@ -105,7 +109,7 @@ const LeftSideMenuItems = ({
 
   const bots = useMemo(
     () => Object.values(attachBots).filter((bot) => bot.isForSideMenu),
-    [attachBots]
+    [attachBots],
   );
 
   const handleSelectMyProfile = useLastCallback(() => {
@@ -118,11 +122,11 @@ const LeftSideMenuItems = ({
 
   const handleSelectTonTV = useLastCallback(() => {
     // Open TonTV TMA
-    openUrl({ url: "https://t.me/tontv_official_bot/app", shouldSkipModal: true });
+    openUrl({ url: 'https://t.me/tontv_official_bot/app', shouldSkipModal: true });
   });
   const handleSelectAppStore = useLastCallback(() => {
     // Open AppStore TMA
-    openUrl({ url: "https://t.me/Tongram_center_bot/Tongram_Apps_Center", shouldSkipModal: true });
+    openUrl({ url: 'https://t.me/Tongram_center_bot/Tongram_Apps_Center', shouldSkipModal: true });
   });
 
   const handleSelectSaved = useLastCallback(() => {
@@ -132,11 +136,11 @@ const LeftSideMenuItems = ({
   const handleDarkModeToggle = useLastCallback(
     (e: React.SyntheticEvent<HTMLElement>) => {
       e.stopPropagation();
-      const newTheme = theme === "light" ? "dark" : "light";
+      const newTheme = theme === 'light' ? 'dark' : 'light';
 
       setSharedSettingOption({ theme: newTheme });
       setSharedSettingOption({ shouldUseSystemTheme: false });
-    }
+    },
   );
 
   const handleAnimationLevelChange = useLastCallback(
@@ -151,27 +155,27 @@ const LeftSideMenuItems = ({
         newLevel === ANIMATION_LEVEL_MIN
           ? INITIAL_PERFORMANCE_STATE_MIN
           : newLevel === ANIMATION_LEVEL_MAX
-          ? INITIAL_PERFORMANCE_STATE_MAX
-          : INITIAL_PERFORMANCE_STATE_MED;
+            ? INITIAL_PERFORMANCE_STATE_MAX
+            : INITIAL_PERFORMANCE_STATE_MED;
 
       setSharedSettingOption({
         animationLevel: newLevel as AnimationLevel,
         wasAnimationLevelSetManually: true,
       });
       updatePerformanceSettings(performanceSettings);
-    }
+    },
   );
 
   const handleChangelogClick = useLastCallback(() => {
-    window.open(BETA_CHANGELOG_URL, "_blank", "noopener,noreferrer");
+    window.open(BETA_CHANGELOG_URL, '_blank', 'noopener,noreferrer');
   });
 
   const handleSwitchToWebK = useLastCallback(() => {
-    switchPermanentWebVersion("K");
+    switchPermanentWebVersion('K');
   });
 
   const handleOpenTipsChat = useLastCallback(() => {
-    openChatByUsername({ username: lang("TelegramFeaturesUsername") });
+    openChatByUsername({ username: lang('TelegramFeaturesUsername') });
   });
 
   const handleBugReportClick = useLastCallback(() => {
@@ -192,45 +196,63 @@ const LeftSideMenuItems = ({
       )}
       {/* Add by JP */}
       <MenuItem
-        customIcon={
+        customIcon={(
           <img
             src={tonTVIcon}
             alt="TonTV"
             className="icon"
           />
-        }
+        )}
         onClick={handleSelectTonTV}
       >
         TonTV
       </MenuItem>
-      <MenuItem 
-        customIcon={
+      <MenuItem
+        customIcon={(
           <img
             src={appStoreIcon}
             alt="App Store"
             className="icon"
           />
-        } onClick={handleSelectAppStore}>
+        )}
+        onClick={handleSelectAppStore}
+      >
         App Store
       </MenuItem>
       <MenuSeparator />
       {/* END Add by JP */}
       <MenuItem icon="user" onClick={handleSelectMyProfile}>
-        {lang("MenuMyProfile")}
+        {lang('MenuMyProfile')}
+      </MenuItem>
+      <MenuItem customIcon={<img src={tonWalletIcon} alt="Wallet" className="icon" />} disabled={true}>
+        {lang('MenuTonWallet')}
+        <span className="comingSoon">Coming Soon</span>
+      </MenuItem>
+      <MenuItem customIcon={<img src={AITonyIcon} alt="AI Tony" className="icon" />} disabled={true}>
+        {lang('MenuAITony')}
+        <span className="comingSoon">Coming Soon</span>
+      </MenuItem>
+      <MenuItem customIcon={<img src={CEXIcon} alt="CEX" className="icon" />} disabled={true}>
+        {lang('MenuCexEchange')}
+        <span className="comingSoon">Coming Soon</span>
+      </MenuItem>
+      <MenuItem customIcon={<img src={P2PIcon} alt="P2P" className="icon" />} disabled={true}>
+        {lang('MenuP2PExchange')}
+        <span className="comingSoon">Coming Soon</span>
       </MenuItem>
       <MenuItem icon="saved-messages" onClick={handleSelectSaved}>
-        {lang("MenuSavedMessages")}
+        {lang('MenuSavedMessages')}
       </MenuItem>
       {archiveSettings.isHidden && (
         <MenuItem icon="archive" onClick={onSelectArchived}>
-          <span className="menu-item-name">{lang("MenuArchivedChats")}</span>
+          <span className="menu-item-name">{lang('MenuArchivedChats')}</span>
           {archivedUnreadChatsCount > 0 && (
             <div className="right-badge">{archivedUnreadChatsCount}</div>
           )}
         </MenuItem>
       )}
       <MenuItem icon="group" onClick={onSelectContacts}>
-        {lang("MenuContacts")}
+        {lang('MenuContacts')}
       </MenuItem>
       {bots.map((bot) => (
         <AttachBotItem
@@ -243,36 +265,36 @@ const LeftSideMenuItems = ({
         />
       ))}
       <MenuItem icon="settings" onClick={onSelectSettings}>
-        {lang("MenuSettings")}
+        {lang('MenuSettings')}
       </MenuItem>
       <MenuItem icon="darkmode" onClick={handleDarkModeToggle}>
-        <span className="menu-item-name">{lang("MenuNightMode")}</span>
+        <span className="menu-item-name">{lang('MenuNightMode')}</span>
         <Switcher
           id="darkmode"
           label={lang(
-            theme === "dark"
-              ? "AriaMenuDisableNightMode"
-              : "AriaMenuEnableNightMode"
+            theme === 'dark'
+              ? 'AriaMenuDisableNightMode'
+              : 'AriaMenuEnableNightMode',
           )}
-          checked={theme === "dark"}
+          checked={theme === 'dark'}
           noAnimation
         />
       </MenuItem>
       <MenuItem icon="animations" onClick={handleAnimationLevelChange}>
         <span className="menu-item-name capitalize">
-          {lang("MenuAnimationsSwitch")}
+          {lang('MenuAnimationsSwitch')}
         </span>
         <Toggle value={animationLevelValue} />
       </MenuItem>
       <MenuItem icon="help" onClick={handleOpenTipsChat}>
-        {lang("MenuTelegramFeatures")}
+        {lang('MenuTelegramFeatures')}
       </MenuItem>
       <MenuItem icon="bug" onClick={handleBugReportClick}>
-        {lang("MenuReportBug")}
+        {lang('MenuReportBug')}
       </MenuItem>
       {IS_BETA && (
         <MenuItem icon="permissions" onClick={handleChangelogClick}>
-          {lang("MenuBetaChangelog")}
+          {lang('MenuBetaChangelog')}
         </MenuItem>
       )}
       {withOtherVersions && (
@@ -282,12 +304,12 @@ const LeftSideMenuItems = ({
           href={`${WEB_VERSION_BASE}k`}
           onClick={handleSwitchToWebK}
         >
-          {lang("MenuSwitchToK")}
+          {lang('MenuSwitchToK')}
         </MenuItem>
       )}
       {canInstall && (
         <MenuItem icon="install" onClick={getPromptInstall()}>
-          {lang("MenuInstallApp")}
+          {lang('MenuInstallApp')}
         </MenuItem>
       )}
     </>
@@ -309,7 +331,7 @@ export default memo(
       canInstall: Boolean(tabState.canInstall),
       archiveSettings,
       attachBots,
-      accountsTotalLimit: selectPremiumLimit(global, "moreAccounts"),
+      accountsTotalLimit: selectPremiumLimit(global, 'moreAccounts'),
     };
-  })(LeftSideMenuItems)
+  })(LeftSideMenuItems),
 );
