@@ -181,6 +181,8 @@ import SendAsMenu from '../middle/composer/SendAsMenu.async';
 import StickerTooltip from '../middle/composer/StickerTooltip.async';
 import SymbolMenuButton from '../middle/composer/SymbolMenuButton';
 import ToDoListModal from '../middle/composer/ToDoListModal.async';
+import TranlationButton from '../middle/composer/TongramAI/TranlationButton';
+import TranlationModal from '../middle/composer/TongramAI/TranslationModal';
 import WebPagePreview from '../middle/composer/WebPagePreview';
 import MessageEffect from '../middle/message/MessageEffect';
 import ReactionSelector from '../middle/message/reactions/ReactionSelector';
@@ -480,6 +482,8 @@ const Composer: FC<OwnProps & StateProps> = ({
 
   const [getHtml, setHtml] = useSignal('');
   const [isMounted, setIsMounted] = useState(false);
+  const [isShowTranslation, setShowTranslation] = useState(false);
+
   const getSelectionRange = useGetSelectionRange(editableInputCssSelector);
   const lastMessageSendTimeSeconds = useRef<number>();
   const prevDropAreaState = usePreviousDeprecated(dropAreaState);
@@ -1988,6 +1992,11 @@ const Composer: FC<OwnProps & StateProps> = ({
         onClear={closeTodoListModal}
         onSend={handleToDoListSend}
       />
+      <TranlationModal
+        isOpen={isShowTranslation}
+        onClose={() => setShowTranslation(false)}
+        onCloseAnimationEnd={() => setShowTranslation(false)}
+      />
       <SendAsMenu
         isOpen={isSendAsMenuOpen}
         onClose={closeSendAsMenu}
@@ -2266,6 +2275,7 @@ const Composer: FC<OwnProps & StateProps> = ({
               {formatVoiceRecordDuration(currentRecordTime - startRecordTimeRef.current!)}
             </span>
           )}
+          <TranlationButton onShow={() => setShowTranslation(true)} />
           {!isNeedPremium && (
             <AttachMenu
               chatId={chatId}

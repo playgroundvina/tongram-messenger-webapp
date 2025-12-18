@@ -463,8 +463,6 @@
     --_scroller-right-gap: calc((var(--action-button-size) + var(--action-button-compact-fix) - 0.125rem));
 
     scrollbar-gutter: stable;
-    margin-right: calc(-1 * var(--_scroller-right-gap));
-    padding-right: var(--_scroller-right-gap);
   }
 
   > .Spinner {
