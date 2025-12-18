@@ -219,11 +219,6 @@ const LeftSideMenuItems = ({
       >
         App Store
       </MenuItem>
-      <MenuSeparator />
-      {/* END Add by JP */}
-      <MenuItem icon="user" onClick={handleSelectMyProfile}>
-        {lang('MenuMyProfile')}
-      </MenuItem>
       <MenuItem customIcon={<img src={tonWalletIcon} alt="Wallet" className="icon" />} disabled={true}>
         {lang('MenuTonWallet')}
         <span className="comingSoon">Coming Soon</span>
@@ -239,6 +234,11 @@ const LeftSideMenuItems = ({
       <MenuItem customIcon={<img src={P2PIcon} alt="P2P" className="icon" />} disabled={true}>
         {lang('MenuP2PExchange')}
         <span className="comingSoon">Coming Soon</span>
+      </MenuItem>
+      <MenuSeparator />
+      {/* END Add by JP */}
+      <MenuItem icon="user" onClick={handleSelectMyProfile}>
+        {lang('MenuMyProfile')}
       </MenuItem>
       <MenuItem icon="saved-messages" onClick={handleSelectSaved}>
         {lang('MenuSavedMessages')}
