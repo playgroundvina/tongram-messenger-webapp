@@ -1,4 +1,4 @@
-import './TranlationButton.scss';
+import './TranslationButton.scss';
 
 import TongramAiIcon from '../../../../assets/tongramAi.svg';
 
@@ -6,9 +6,9 @@ type OwnProps = {
   onShow: () => void;
 };
 
-const TranlationButton = ({ onShow }: OwnProps) => {
+const TranslationButton = ({ onShow }: OwnProps) => {
   return (
-    <div className="Tranlation">
+    <div className="Translation">
       <button className="btn" onClick={() => onShow()}>
         <img src={TongramAiIcon} alt="Translation Icon" sizes="48px" />
       </button>
@@ -16,4 +16,4 @@ const TranlationButton = ({ onShow }: OwnProps) => {
   );
 };
 
-export default TranlationButton;
+export default TranslationButton;

@@ -20,6 +20,11 @@
     margin: 0 0 0 0.75rem;
   }
 
+  .modal-title{
+    display: flex;
+    gap: 10px
+  }
+
   .modal-content {
     padding: 0.5rem 1.25rem;
     display: flex;

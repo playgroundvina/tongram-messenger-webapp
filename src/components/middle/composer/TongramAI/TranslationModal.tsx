@@ -11,6 +11,7 @@ import TabList from '../../../ui/TabList';
 import './TranslationModal.scss';
 
 import SentArrow from '../../../../assets/sentArrow.svg';
+import TongramAiIcon from '../../../../assets/tongramAi.svg';
 import Translation from '../../../../assets/translation.svg';
 import WritingAssistant from '../../../../assets/writingAssistant.svg';
 
@@ -31,7 +32,10 @@ const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => 
   function renderHeader() {
     return (
       <div className="modal-header" dir={lang.isRtl ? 'rtl' : undefined}>
-        <h3 className="modal-title">Tongram AI Translation</h3>
+        <h3 className="modal-title">
+          <img src={TongramAiIcon} alt="Tongram AI" className="tongram-ai-icon" />
+          Tongram AI Translation
+        </h3>
       </div>
     );
   }
