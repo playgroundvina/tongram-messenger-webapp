@@ -34,7 +34,7 @@ const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => 
       <div className="modal-header" dir={lang.isRtl ? 'rtl' : undefined}>
         <h3 className="modal-title">
           <img src={TongramAiIcon} alt="Tongram AI" className="tongram-ai-icon" />
-          Tongram AI Translation
+          Tongram AI
         </h3>
       </div>
     );
