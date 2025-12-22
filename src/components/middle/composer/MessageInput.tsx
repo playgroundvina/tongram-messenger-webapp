@@ -244,6 +244,7 @@ const MessageInput: FC<OwnProps & StateProps> = ({
   const htmlRef = useRef(getHtml());
   useLayoutEffect(() => {
     const html = isActive ? getHtml() : '';
+    console.log('useLayoutEffect', html)
 
     if (!isActive && inputRef.current) {
       inputRef.current.blur();
@@ -384,11 +385,11 @@ const MessageInput: FC<OwnProps & StateProps> = ({
     const { isComposing } = e;
 
     const html = getHtml();
+
     if (!isComposing && !html && (e.metaKey || e.ctrlKey)) {
       const targetIndexDelta = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : undefined;
       if (targetIndexDelta) {
         e.preventDefault();
-
         replyToNextMessage({ targetIndexDelta });
         return;
       }
@@ -495,6 +496,7 @@ const MessageInput: FC<OwnProps & StateProps> = ({
       }
 
       const input = inputRef.current!;
+
       const isSelectionCollapsed = document.getSelection()?.isCollapsed;
 
       if (
@@ -514,6 +516,7 @@ const MessageInput: FC<OwnProps & StateProps> = ({
         focusEditableElement(input, true, true);
 
         const newEvent = new KeyboardEvent(e.type, e as any);
+
         input.dispatchEvent(newEvent);
       }
     };

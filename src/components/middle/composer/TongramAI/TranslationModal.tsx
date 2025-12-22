@@ -1,6 +1,7 @@
 import { useState } from '../../../../lib/teact/teact';
 
 import useOldLang from '../../../../hooks/useOldLang';
+import { translateMessageText } from '../hooks/useTranslate';
 
 import Button from '../../../ui/Button';
 import DropdownMenu from '../../../ui/DropdownMenu';
@@ -15,19 +16,22 @@ import TongramAiIcon from '../../../../assets/tongramAi.svg';
 import Translation from '../../../../assets/translation.svg';
 import WritingAssistant from '../../../../assets/writingAssistant.svg';
 
-export type OwnProps = {
+export type TranslateModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onCloseAnimationEnd?: () => void;
+  onSubmit: (text: string) => void;
 };
 
-const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => {
+const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: TranslateModalProps) => {
   const lang = useOldLang();
 
   const [activeTab, setActiveTab] = useState(0);
   // eslint-disable-next-line @stylistic/max-len
   const languages = ['English', 'Tiếng Việt', 'Español', 'Русский', 'Français', 'Deutsch', 'Italiano', 'Português', '中文', '日本語', '한국어'];
   const [selectedLang, setSelectedLang] = useState(languages[0]);
+  const [sentValue, setSentValue] = useState('');
+  const [translateValue, setTranslateValue] = useState('');
 
   function renderHeader() {
     return (
@@ -72,6 +76,12 @@ const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => 
     </div>
   );
 
+  const handleSent = async () => {
+    const resTranslate = await translateMessageText(sentValue, selectedLang);
+
+    setTranslateValue(resTranslate as unknown as string);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -90,22 +100,29 @@ const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => 
 
         <div className="content">
           {activeTab === 0 ? (
-            <DropdownMenu trigger={LanguageTrigger} className="translation-language-dropdown">
-              <div className="translation-language-list">
-                {languages.map((l) => (
-                  <div
-                    key={l}
-                    className={`translation-language-item ${l === selectedLang ? 'active' : ''}`}
-                    onClick={() => setSelectedLang(l)}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    {l}
-                    {l === selectedLang ? <span className="check">  ✓</span> : undefined}
-                  </div>
-                ))}
+            <div>
+              <DropdownMenu trigger={LanguageTrigger} className="translation-language-dropdown">
+                <div className="translation-language-list">
+                  {languages.map((l) => (
+                    <div
+                      key={l}
+                      className={`translation-language-item ${l === selectedLang ? 'active' : ''}`}
+                      onClick={() => setSelectedLang(l)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      {l}
+                      {l === selectedLang ? <span className="check">  ✓</span> : undefined}
+                    </div>
+                  ))}
+                </div>
+              </DropdownMenu>
+              <div className="text-translate">
+                <p className="info-text">
+                  {translateValue}
+                </p>
               </div>
-            </DropdownMenu>
+            </div>
           ) : (
             <div className="disabled-content">{lang('Coming soon')}</div>
           )}
@@ -113,19 +130,32 @@ const TranlationModal = ({ isOpen, onClose, onCloseAnimationEnd }: OwnProps) => 
       </div>
       <div>
         <div className="MessageTranslation">
-          <InputText placeholder={lang('Message')} className="inputSent" />
+          <InputText
+            placeholder={lang('Message')}
+            onChange={(e) => setSentValue(e.target.value)}
+            className="inputSent"
+          />
           <div className="sentButton">
-            <button className="btn">
+            <Button className="btn" onClick={() => handleSent()} disabled={!sentValue}>
               <img src={SentArrow} alt="Sent Arrow Icon" sizes="48px" />
-            </button>
+            </Button>
           </div>
         </div>
-        <div className="dialog-buttons-column">
+        <div className="dialog-buttons">
           <Button className="confirm-dialog-button" isText onClick={onClose}>{lang('Cancel')}</Button>
+          <Button
+            className="confirm-dialog-button"
+            color="secondary"
+            isText
+            disabled={!translateValue}
+            onClick={() => onSubmit(translateValue as unknown as string)}
+          >
+            {lang('Apply')}
+          </Button>
         </div>
       </div>
     </Modal>
   );
 };
 
-export default TranlationModal;
+export default TranslationModal;
