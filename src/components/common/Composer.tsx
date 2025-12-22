@@ -1996,6 +1996,10 @@ const Composer: FC<OwnProps & StateProps> = ({
         isOpen={isShowTranslation}
         onClose={() => setShowTranslation(false)}
         onCloseAnimationEnd={() => setShowTranslation(false)}
+        onSubmit={(text) => {
+          setShowTranslation(false);
+          setHtml(text);
+        }}
       />
       <SendAsMenu
         isOpen={isSendAsMenuOpen}
