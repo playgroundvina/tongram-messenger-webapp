@@ -28,6 +28,7 @@ type OwnProps = {
   withReactionOffset?: boolean;
   outgoingStatus?: ApiMessageOutgoingStatus;
   signature?: string;
+  showTranslateText?: boolean;
   availableReactions?: ApiAvailableReaction[];
   noReplies?: boolean;
   repliesThreadInfo?: ApiThreadInfo;
@@ -36,6 +37,7 @@ type OwnProps = {
   withFullDate?: boolean;
   effectEmoji?: string;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onTranslate: (e: ApiMessage) => void;
   onTranslationClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   onEffectClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   renderQuickReactionButton?: () => TeactNode | undefined;
@@ -47,6 +49,7 @@ const MessageMeta: FC<OwnProps> = ({
   message,
   outgoingStatus,
   signature,
+  showTranslateText,
   withReactionOffset,
   repliesThreadInfo,
   renderQuickReactionButton,
@@ -56,6 +59,7 @@ const MessageMeta: FC<OwnProps> = ({
   withFullDate,
   effectEmoji,
   onClick,
+  onTranslate,
   onTranslationClick,
   onEffectClick,
   onOpenThread,
@@ -142,7 +146,7 @@ const MessageMeta: FC<OwnProps> = ({
   }, [oldLang, message.date, message.forwardInfo?.date, withFullDate]);
 
   const fullClassName = buildClassName(
-    'MessageMeta',
+    outgoingStatus ? 'MessageMeta' : 'MessageMeta not-outgoing',
     withReactionOffset && 'reactions-offset',
     message.forwardInfo?.isImported && 'is-imported',
   );
@@ -151,7 +155,7 @@ const MessageMeta: FC<OwnProps> = ({
     <span
       className={fullClassName}
       dir={lang.isRtl ? 'rtl' : 'ltr'}
-      onClick={onClick}
+      onClick={outgoingStatus ? onClick : undefined}
       data-ignore-on-paste
     >
       {effectEmoji && (
@@ -195,19 +199,42 @@ const MessageMeta: FC<OwnProps> = ({
           }
         </span>
       )}
-      <span className="message-time" title={dateTitle} onMouseEnter={markActivated}>
-        {message.forwardInfo?.isImported && (
-          <>
-            <span className="message-imported" onClick={handleImportedClick}>
-              {formatDateTimeToString(message.forwardInfo.date * 1000, lang.code, true)}
+      {outgoingStatus ? (
+        <span className="message-time" title={dateTitle} onMouseEnter={markActivated}>
+          {message.forwardInfo?.isImported && (
+            <>
+              <span className="message-imported" onClick={handleImportedClick}>
+                {formatDateTimeToString(message.forwardInfo.date * 1000, lang.code, true)}
+              </span>
+              <span className="message-imported" onClick={handleImportedClick}>{lang('MessageMetaImported')}</span>
+            </>
+          )}
+          {message.isEdited && `${lang('MessageMetaEdited')} `}
+          {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
+          {date}
+        </span>
+      ) : (
+        <div className="message-btn-translate">
+          <div className="message-time" title={dateTitle} onMouseEnter={markActivated} onClick={onClick}>
+            {message.forwardInfo?.isImported && (
+              <>
+                <span className="message-imported" onClick={handleImportedClick}>
+                  {formatDateTimeToString(message.forwardInfo.date * 1000, lang.code, true)}
+                </span>
+                <span className="message-imported" onClick={handleImportedClick}>{lang('MessageMetaImported')}</span>
+              </>
+            )}
+            {message.isEdited && `${lang('MessageMetaEdited')} `}
+            {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
+            <span>
+              {date}
             </span>
-            <span className="message-imported" onClick={handleImportedClick}>{lang('MessageMetaImported')}</span>
-          </>
-        )}
-        {message.isEdited && `${lang('MessageMetaEdited')} `}
-        {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
-        {date}
-      </span>
+          </div>
+          <button className="btn-translate" onClick={() => onTranslate(message)}>
+            {showTranslateText ? 'Hide Translation' : 'Translate'}
+          </button>
+        </div>
+      )}
       {outgoingStatus && (
         <MessageOutgoingStatus status={outgoingStatus} />
       )}

@@ -177,6 +177,7 @@ export enum SettingsScreens {
   Notifications,
   DataStorage,
   Language,
+  AITranslationLanguage,
   ActiveSessions,
   General,
   GeneralChatBackground,

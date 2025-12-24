@@ -29,6 +29,7 @@ import SettingsGeneralBackground from './SettingsGeneralBackground';
 import SettingsGeneralBackgroundColor from './SettingsGeneralBackgroundColor';
 import SettingsHeader from './SettingsHeader';
 import SettingsLanguage from './SettingsLanguage';
+import SettingsLanguageAITranslation from './SettingsLanguageAITranslation';
 import SettingsMain from './SettingsMain';
 import SettingsNotifications from './SettingsNotifications';
 import SettingsPerformance from './SettingsPerformance';
@@ -290,6 +291,13 @@ const Settings: FC<OwnProps> = ({
       case SettingsScreens.Language:
         return (
           <SettingsLanguage
+            isActive={isScreenActive || activeScreen === SettingsScreens.DoNotTranslate}
+            onReset={handleReset}
+          />
+        );
+      case SettingsScreens.AITranslationLanguage:
+        return (
+          <SettingsLanguageAITranslation
             isActive={isScreenActive || activeScreen === SettingsScreens.DoNotTranslate}
             onReset={handleReset}
           />
