@@ -177,6 +177,23 @@
   .message-content.has-replies.text:not(.custom-shape):not(.is-inverted-media) & {
     bottom: 3.1875rem;
   }
+  .message-btn-translate{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px
+  }
+
+  .btn-translate{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 0;
+    color: rgba(var(--color-text-meta-rgb), 0.75);
+    &:focus{
+      outline: none;
+    }
+  }
 
   &[dir="rtl"] {
     .message-views {
@@ -187,6 +204,16 @@
     }
   }
 }
+
+.not-outgoing{
+  position: static !important;
+  display: block !important;
+  float: none !important;
+  margin-left: 0 !important;
+  padding: 5px 0 !important;
+}
+
+
 
 .Message:not(.own) {
   .custom-shape .with-subheader + .MessageMeta {

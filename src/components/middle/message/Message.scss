@@ -761,6 +761,27 @@
     min-width: 17rem;
   }
 
+  .translated-text{
+     border-top: 1px solid #71717176;
+     padding-top: 5px;
+     margin-top: 5px;
+  }
+
+  .btn-translated{
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    &:focus{
+      outline: none;
+    }
+  }
+
+  .icon-translated{
+    margin-left: 10px;
+    font-size: 20px;
+  }
+
   @media (min-width: 1921px) {
     --max-width: calc(30vw - 1rem);
   }

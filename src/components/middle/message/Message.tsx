@@ -205,6 +205,7 @@ import Video from './Video';
 import WebPage from './WebPage';
 
 import './Message.scss';
+import { translateMessageText } from '../composer/hooks/useTranslate';
 
 type MessagePositionProperties = {
   isFirstInGroup: boolean;
@@ -478,6 +479,8 @@ const Message = ({
   const [shouldPlayEffect, requestEffect, hideEffect] = useFlag();
   const [isDeclineDialogOpen, openDeclineDialog, closeDeclineDialog] = useFlag();
   const [declineReason, setDeclineReason] = useState('');
+  const [translateText, setTranslateText] = useState('');
+  const [showTranslateText, setShowTranslateText] = useState(false);
   const { isMobile, isTouchScreen } = useAppLayout();
 
   useOnIntersect(bottomMarkerRef, observeIntersectionForBottom);
@@ -978,6 +981,10 @@ const Message = ({
       reactionsMaxWidth = width + EXTRA_SPACE_FOR_REACTIONS;
     }
 
+    if (!isOwn) {
+      style = `padding-right: 20px; ${style}`;
+    }
+
     return {
       contentWidth, style, reactionsMaxWidth,
     };
@@ -1039,6 +1046,22 @@ const Message = ({
     observeIntersectionForPlaying,
   ]);
 
+  async function handleTranslation(e: ApiMessage) {
+    const textMessageTranslate = e.content.text?.text;
+
+    if (showTranslateText) {
+      setShowTranslateText(false);
+      return;
+    }
+
+    if (textMessageTranslate) {
+      const translate = await translateMessageText(textMessageTranslate);
+
+      setTranslateText(translate);
+      setShowTranslateText(true);
+    }
+  }
+
   function renderReactionsAndMeta() {
     const meta = (
       <MessageMeta
@@ -1049,6 +1072,7 @@ const Message = ({
         repliesThreadInfo={repliesThreadInfo}
         outgoingStatus={outgoingStatus}
         signature={signature}
+        showTranslateText={showTranslateText}
         withReactionOffset={reactionsPosition === 'inside'}
         renderQuickReactionButton={
           withQuickReactionButton && quickReactionPosition === 'in-meta' ? renderQuickReactionButton : undefined
@@ -1057,6 +1081,7 @@ const Message = ({
         isTranslated={Boolean(requestedTranslationLanguage ? currentTranslatedText : undefined)}
         effectEmoji={effect?.emoticon}
         onClick={handleMetaClick}
+        onTranslate={handleTranslation}
         onEffectClick={handleEffectClick}
         onTranslationClick={handleTranslationClick}
         onOpenThread={handleOpenThread}
@@ -1315,6 +1340,14 @@ const Message = ({
                     <div className="text-loading">
                       {renderMessageText(true)}
                     </div>
+                  </div>
+                )}
+                {showTranslateText && (
+                  <div className="translated-text" dir="auto">
+                    {translateText}
+                    <button className="btn-translated">
+                      <Icon name="copy" className="icon-translated" character="copy" />
+                    </button>
                   </div>
                 )}
                 {hasFactCheck && (

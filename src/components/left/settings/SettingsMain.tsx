@@ -25,6 +25,8 @@ import ProfileInfo from '../../common/profile/ProfileInfo';
 import ConfirmDialog from '../../ui/ConfirmDialog';
 import ListItem from '../../ui/ListItem';
 
+import AITranslation from '../../../assets/AITranslation.svg';
+
 type OwnProps = {
   isActive?: boolean;
   onReset: () => void;
@@ -60,6 +62,7 @@ const SettingsMain: FC<OwnProps & StateProps> = ({
   } = getActions();
 
   const [isSupportDialogOpen, openSupportDialog, closeSupportDialog] = useFlag(false);
+  const LangSelected = window.localStorage.getItem('preferredLanguage');
 
   const lang = useLang();
 
@@ -162,6 +165,23 @@ const SettingsMain: FC<OwnProps & StateProps> = ({
         >
           {lang('Language')}
           <span className="settings-item__current-value">{lang.languageInfo.nativeName}</span>
+        </ListItem>
+        <ListItem
+          leftElement={(
+            <img
+              src={AITranslation}
+              className="icon icon-language ListItem-main-icon"
+              alt="AITranslation"
+            />
+          )}
+          narrow
+
+          onClick={() => openSettingsScreen({ screen: SettingsScreens.AITranslationLanguage })}
+        >
+          {lang('AITranslationSettings')}
+          <span className="settings-item__current-value">
+            {LangSelected ? JSON.parse(LangSelected).nativeName : 'English'}
+          </span>
         </ListItem>
         <ListItem
           icon="stickers"

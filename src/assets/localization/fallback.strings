@@ -467,6 +467,7 @@
 "DataSettings" = "Data and Storage";
 "PrivacySettings" = "Privacy and Security";
 "Language" = "Language";
+"AITranslationSettings" = "AI Translation Settings";
 "SettingsExperimental" = "Experimental settings";
 "PrivacyPhone" = "Phone Number";
 "PrivacyLastSeen" = "Last Seen & Online";

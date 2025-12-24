@@ -417,6 +417,7 @@ export interface LangPair {
   'DataSettings': undefined;
   'PrivacySettings': undefined;
   'Language': undefined;
+  'AITranslationSettings': undefined;
   'SettingsExperimental': undefined;
   'PrivacyPhone': undefined;
   'PrivacyLastSeen': undefined;
