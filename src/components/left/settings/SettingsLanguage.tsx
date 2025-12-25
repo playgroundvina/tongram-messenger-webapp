@@ -50,7 +50,6 @@ const SettingsLanguage: FC<OwnProps & StateProps> = ({
     openPremiumModal,
     openSettingsScreen,
   } = getActions();
-
   const [selectedLanguage, setSelectedLanguage] = useState<string>(language);
   const [isLoading, markIsLoading, unmarkIsLoading] = useFlag();
 

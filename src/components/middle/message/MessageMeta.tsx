@@ -6,6 +6,7 @@ import { getActions } from '../../../global';
 import type {
   ApiAvailableReaction, ApiMessage, ApiMessageOutgoingStatus, ApiThreadInfo,
 } from '../../../api/types';
+import { LANGUAGE_SCRIPT_MAP, SCRIPT_REGEX } from '../../../global/types/languageCode';
 
 import buildClassName from '../../../util/buildClassName';
 import { formatDateTimeToString, formatPastTimeShort, formatTime } from '../../../util/dates/dateFormat';
@@ -151,6 +152,29 @@ const MessageMeta: FC<OwnProps> = ({
     message.forwardInfo?.isImported && 'is-imported',
   );
 
+  function isMessageInLanguage(
+    messageText: string,
+    langCode: string,
+  ): boolean {
+    if (!messageText?.trim()) return false;
+
+    const script = LANGUAGE_SCRIPT_MAP[langCode];
+    if (!script) return false;
+
+    const text = messageText.trim();
+    const expectedRegex = SCRIPT_REGEX[script];
+    if (script === 'latin' || script === 'latin-extended') {
+      return expectedRegex.test(text);
+    }
+
+    for (const [key, regex] of Object.entries(SCRIPT_REGEX)) {
+      if (key !== script && regex.test(text)) {
+        return false;
+      }
+    }
+    return expectedRegex.test(text);
+  }
+
   return (
     <span
       className={fullClassName}
@@ -230,9 +254,13 @@ const MessageMeta: FC<OwnProps> = ({
               {date}
             </span>
           </div>
-          <button className="btn-translate" onClick={() => onTranslate(message)}>
-            {showTranslateText ? 'Hide Translation' : 'Translate'}
-          </button>
+          {
+            !isMessageInLanguage(message.content.text?.text || '', lang.languageInfo.langCode) && (
+              <button className="btn-translate" onClick={() => onTranslate(message)}>
+                {showTranslateText ? 'Hide Translation' : 'Translate'}
+              </button>
+            )
+          }
         </div>
       )}
       {outgoingStatus && (

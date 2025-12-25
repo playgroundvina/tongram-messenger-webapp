@@ -244,7 +244,6 @@ const MessageInput: FC<OwnProps & StateProps> = ({
   const htmlRef = useRef(getHtml());
   useLayoutEffect(() => {
     const html = isActive ? getHtml() : '';
-    console.log('useLayoutEffect', html)
 
     if (!isActive && inputRef.current) {
       inputRef.current.blur();

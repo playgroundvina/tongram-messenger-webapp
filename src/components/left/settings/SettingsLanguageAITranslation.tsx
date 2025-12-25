@@ -4,6 +4,7 @@ import {
 } from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
 
+import type { ApiLanguage } from '../../../api/types';
 import type { SharedSettings } from '../../../global/types';
 import type { AccountSettings } from '../../../types';
 
@@ -64,6 +65,16 @@ const SettingsLanguageAITranslation: FC<OwnProps & StateProps> = ({
 
   const options = useMemo(() => {
     if (!languages) return undefined;
+    const vnLanguage: ApiLanguage = {
+      name: 'Tiếng Việt',
+      nativeName: 'Tiếng Việt',
+      langCode: 'vn',
+      pluralCode: 'vn',
+      stringsCount: 2227,
+      translatedCount: 2227,
+      translationsUrl: 'https://translations.telegram.org/vn/',
+    };
+    const languagesWithVN = [...languages, vnLanguage];
     const currentLangCode = (LangSelected
       ? JSON.parse(LangSelected)
       : { langCode: 'en' }).langCode || 'en';
@@ -73,7 +84,7 @@ const SettingsLanguageAITranslation: FC<OwnProps & StateProps> = ({
       setSelectedLanguage(currentLangCode);
     }
 
-    return languages.map(({ langCode, nativeName, name }) => ({
+    return languagesWithVN.map(({ langCode, nativeName, name }) => ({
       value: langCode,
       label: nativeName,
       subLabel: name,
