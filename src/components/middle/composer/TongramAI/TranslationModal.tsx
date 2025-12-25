@@ -1,11 +1,20 @@
-import { useState } from '../../../../lib/teact/teact';
+import type { FC } from '../../../../lib/teact/teact';
+import { memo, useEffect, useMemo, useState } from '../../../../lib/teact/teact';
+import { getActions, withGlobal } from '../../../../global';
 
+import type { ApiLanguage } from '../../../../api/types';
+import type { SharedSettings } from '../../../../global/types';
+
+import { selectSharedSettings } from '../../../../global/selectors/sharedState';
+
+import useFlag from '../../../../hooks/useFlag';
 import useOldLang from '../../../../hooks/useOldLang';
 import { translateMessageText } from '../hooks/useTranslate';
 
 import Button from '../../../ui/Button';
 import DropdownMenu from '../../../ui/DropdownMenu';
 import InputText from '../../../ui/InputText';
+import Loading from '../../../ui/Loading';
 import Modal from '../../../ui/Modal';
 import TabList from '../../../ui/TabList';
 
@@ -17,21 +26,28 @@ import Translation from '../../../../assets/translation.svg';
 import WritingAssistant from '../../../../assets/writingAssistant.svg';
 
 export type TranslateModalProps = {
+  messageText?: string;
   isOpen: boolean;
   onClose: () => void;
   onCloseAnimationEnd?: () => void;
   onSubmit: (text: string) => void;
 };
 
-const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: TranslateModalProps) => {
-  const lang = useOldLang();
+type StateProps = Pick<SharedSettings, 'languages'>;
 
+const TranslationModal: FC<TranslateModalProps & StateProps> = ({
+  messageText, isOpen, languages, onClose, onCloseAnimationEnd, onSubmit }) => {
+  const {
+    loadLanguages,
+  } = getActions();
+  const [isLoading, markIsLoading, unmarkIsLoading] = useFlag();
+
+  const lang = useOldLang();
   const [activeTab, setActiveTab] = useState(0);
-  // eslint-disable-next-line @stylistic/max-len
-  const languages = ['English', 'Tiếng Việt', 'Español', 'Русский', 'Français', 'Deutsch', 'Italiano', 'Português', '中文', '日本語', '한국어'];
-  const [selectedLang, setSelectedLang] = useState(languages[0]);
-  const [sentValue, setSentValue] = useState('');
+  const [selectedLang, setSelectedLang] = useState(languages?.[0]?.name || '');
+  const [sentValue, setSentValue] = useState(messageText || '');
   const [translateValue, setTranslateValue] = useState('');
+  const [translateLoading, setTranslateLoading] = useState(false);
 
   function renderHeader() {
     return (
@@ -68,19 +84,50 @@ const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: Tr
     },
   ];
 
+  useEffect(() => {
+    if (!languages?.length) {
+      loadLanguages();
+    }
+  }, [languages]);
+
+  const options = useMemo(() => {
+    if (!languages) return undefined;
+    const vnLanguage: ApiLanguage = {
+      name: 'Tiếng Việt',
+      nativeName: 'Tiếng Việt',
+      langCode: 'vn',
+      pluralCode: 'vn',
+      stringsCount: 2227,
+      translatedCount: 2227,
+      translationsUrl: 'https://translations.telegram.org/vn/',
+    };
+    const languagesWithVN = [...languages, vnLanguage];
+
+    return languagesWithVN.map(({ langCode, nativeName, name }) => ({
+      value: langCode,
+      label: nativeName,
+      subLabel: name,
+    }));
+  }, [languages]);
+
   const LanguageTrigger = ({ onTrigger, isOpen: triggerIsOpen }: { onTrigger: () => void; isOpen?: boolean }) => (
     <div className={`language-select ${triggerIsOpen ? 'open' : ''}`} onClick={onTrigger} role="button" tabIndex={0}>
       <span className="icon"><img src={Translation} alt="Translation" /></span>
       <span className="text">{selectedLang || lang('Choose language')}</span>
-      <span className="arrow">⌄</span>
     </div>
   );
 
   const handleSent = async () => {
+    setTranslateLoading(true);
     const resTranslate = await translateMessageText(sentValue, selectedLang);
-
+    setTranslateLoading(false);
     setTranslateValue(resTranslate as unknown as string);
   };
+  useEffect(() => {
+    if (messageText) {
+      setSentValue(messageText || '');
+    }
+  }, [messageText]);
 
   return (
     <Modal
@@ -103,23 +150,23 @@ const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: Tr
             <div>
               <DropdownMenu trigger={LanguageTrigger} className="translation-language-dropdown">
                 <div className="translation-language-list">
-                  {languages.map((l) => (
+                  {options?.map((l) => (
                     <div
-                      key={l}
-                      className={`translation-language-item ${l === selectedLang ? 'active' : ''}`}
-                      onClick={() => setSelectedLang(l)}
+                      key={l.value}
+                      className={`translation-language-item ${l.value === selectedLang ? 'active' : ''}`}
+                      onClick={() => setSelectedLang(l.subLabel)}
                       role="button"
                       tabIndex={0}
                     >
-                      {l}
-                      {l === selectedLang ? <span className="check">  ✓</span> : undefined}
+                      {l.subLabel}
+                      {l.subLabel === selectedLang ? <span className="check">  ✓</span> : undefined}
                     </div>
                   ))}
                 </div>
               </DropdownMenu>
               <div className="text-translate">
                 <p className="info-text">
-                  {translateValue}
+                  {translateLoading ? <Loading /> : translateValue}
                 </p>
               </div>
             </div>
@@ -131,6 +178,7 @@ const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: Tr
       <div>
         <div className="MessageTranslation">
           <InputText
+            value={sentValue}
             placeholder={lang('Message')}
             onChange={(e) => setSentValue(e.target.value)}
             className="inputSent"
@@ -158,4 +206,9 @@ const TranslationModal = ({ isOpen, onClose, onCloseAnimationEnd, onSubmit }: Tr
   );
 };
 
-export default TranslationModal;
+export default memo(withGlobal<TranslateModalProps>(
+  (global): Complete<StateProps> => {
+    const { languages } = selectSharedSettings(global);
+    return { languages };
+  },
+)(TranslationModal));

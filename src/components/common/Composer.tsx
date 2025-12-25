@@ -1993,6 +1993,7 @@ const Composer: FC<OwnProps & StateProps> = ({
         onSend={handleToDoListSend}
       />
       <TranslationModal
+        messageText={inputRef.current?.innerHTML}
         isOpen={isShowTranslation}
         onClose={() => setShowTranslation(false)}
         onCloseAnimationEnd={() => setShowTranslation(false)}

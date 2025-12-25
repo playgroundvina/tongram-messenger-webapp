@@ -152,6 +152,7 @@ import usePreviousDeprecated from '../../../hooks/usePreviousDeprecated';
 import useMessageResizeObserver from '../../../hooks/useResizeMessageObserver';
 import useShowTransition from '../../../hooks/useShowTransition';
 import useTextLanguage from '../../../hooks/useTextLanguage';
+import { translateMessageText } from '../composer/hooks/useTranslate';
 import useDetectChatLanguage from './hooks/useDetectChatLanguage';
 import useFocusMessage from './hooks/useFocusMessage';
 import useInnerHandlers from './hooks/useInnerHandlers';
@@ -175,6 +176,7 @@ import { animateSnap } from '../../main/visualEffects/SnapEffectContainer';
 import Button from '../../ui/Button';
 import ConfirmDialog from '../../ui/ConfirmDialog';
 import InputText from '../../ui/InputText';
+import Loading from '../../ui/Loading';
 import Album from './Album';
 import AnimatedCustomEmoji from './AnimatedCustomEmoji';
 import AnimatedEmoji from './AnimatedEmoji';
@@ -205,7 +207,6 @@ import Video from './Video';
 import WebPage from './WebPage';
 
 import './Message.scss';
-import { translateMessageText } from '../composer/hooks/useTranslate';
 
 type MessagePositionProperties = {
   isFirstInGroup: boolean;
@@ -1051,14 +1052,16 @@ const Message = ({
 
     if (showTranslateText) {
       setShowTranslateText(false);
+      setTranslateText('');
       return;
     }
 
     if (textMessageTranslate) {
       const translate = await translateMessageText(textMessageTranslate);
-
-      setTranslateText(translate);
-      setShowTranslateText(true);
+      if (translate) {
+        setTranslateText(translate);
+        setShowTranslateText(true);
+      }
     }
   }
 
@@ -1342,13 +1345,20 @@ const Message = ({
                     </div>
                   </div>
                 )}
-                {showTranslateText && (
-                  <div className="translated-text" dir="auto">
-                    {translateText}
-                    <button className="btn-translated">
-                      <Icon name="copy" className="icon-translated" character="copy" />
-                    </button>
-                  </div>
+                {translateText !== '' && (
+                  showTranslateText ?
+                    (
+                      <div className="translated-text" dir="auto">
+                        {translateText}
+                        <button
+                          className="btn-translated"
+                          onClick={() => navigator.clipboard.writeText(translateText || '')}
+                        >
+                          <Icon name="copy" className="icon-translated" character="copy" />
+                        </button>
+                      </div>
+                    )
+                    : <Loading />
                 )}
                 {hasFactCheck && (
                   <FactCheck factCheck={factCheck} isToggleDisabled={isInSelectMode} />
