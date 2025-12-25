@@ -9,7 +9,7 @@ export async function translateMessageText(text: string,
 
   try {
     const response = await fetch(
-      'https://1608f7632a68.ngrok-free.app/api/v1/translate-proxy',
+      'https://tongram-ai-dev.motcaigido.xyz/api/v1/translate-proxy',
       {
         method: 'POST',
         headers: {
