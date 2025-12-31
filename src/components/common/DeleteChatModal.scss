@@ -1,6 +1,8 @@
 .DeleteChatModal {
   .modal-dialog {
     max-width: 20rem;
+    background-color: var(--color-background-second);
+    border: 0.5px solid #83838380;
   }
 
   .modal-header {

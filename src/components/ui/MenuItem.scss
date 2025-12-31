@@ -66,10 +66,20 @@
   }
 
   .comingSoon{
-    // opacity: 0.5;
     font-size: 10px;
-    margin-left: 10px;
-    margin-top: 5px;
+
+    .title{
+      font-size: 0.875rem;
+    }
+
+    .destructive{
+      color: var(--color-error);
+      line-height: 8px;
+    }
+
+    p{
+      margin: 0;
+    }
   }
 
   &.disabled {

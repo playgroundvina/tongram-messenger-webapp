@@ -247,7 +247,7 @@ const AuthPhoneNumber: FC<StateProps> = ({
       )}
       <div className="auth-form">
         <div id="logo" />
-        <h1>{lang('AuthTitle')}</h1>
+        <h1>{lang('AuthTitleTongram')}</h1>
         <p className="note">{lang('StartText')}</p>
         <form className="form" action="" onSubmit={handleSubmit}>
           <CountryCodeInput

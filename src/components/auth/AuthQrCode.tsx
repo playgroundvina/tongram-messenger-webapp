@@ -155,7 +155,7 @@ const AuthCode = ({
   const isAuthReady = authState === 'authorizationStateWaitQrCode';
 
   return (
-    <div id="auth-qr-form" className="custom-scroll">
+    <div id="auth-qr-form" className="custom-scroll bg-custom">
       {hasActiveAccount && (
         <Button size="smaller" round color="translucent" className="auth-close" onClick={handleBackNavigation}>
           <Icon name="close" />
@@ -183,9 +183,9 @@ const AuthCode = ({
           </div>
           {!isQrMounted && <div className="qr-loading"><Loading /></div>}
         </div>
-        <h1>{lang('LoginQRTitle')}</h1>
-        <ol>
-          <li><span>{lang('LoginQRHelp1')}</span></li>
+        <h1 className="loginColorCustom">{lang('LoginQRTitleTongram')}</h1>
+        <ol className="loginColorCustom">
+          <li><span>{lang('LoginQRHelp1Tongram')}</span></li>
           <li><span>{lang('LoginQRHelp2', undefined, { withNodes: true, withMarkdown: true })}</span></li>
           <li><span>{lang('LoginQRHelp3')}</span></li>
         </ol>

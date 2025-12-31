@@ -21,6 +21,11 @@
     margin: -0.5rem 0 0.75rem -0.5rem;
     margin-inline-end: calc(min(var(--scrollbar-width) - 0.5rem, 0px));
   }
+
+  .ChatExtra{
+    background-color: #0E1425;
+    border-radius: 18.45px;
+  }
 }
 
 .settings-main-header {
@@ -39,6 +44,11 @@
       padding-left: 1rem !important;
     }
   }
+}
+
+.settings-main-menu--separated{
+  background-color: #0E1425;
+  border-radius: 18.45px;
 }
 
 .settings-content {
@@ -109,7 +119,6 @@
   padding: 0.5rem;
 
   @include mixins.adapt-padding-to-scrollbar(0.5rem);
-  @include mixins.side-panel-section;
 
   .ListItem.narrow:not(.multiline) {
     margin-bottom: 0;

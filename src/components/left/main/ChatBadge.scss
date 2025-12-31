@@ -66,8 +66,8 @@
   &.mention,
   &.unread:not(.muted),
   &.unopened:not(.muted) {
-    color: var(--color-white);
-    background: var(--color-green);
+    color: var(--color-text-black);
+    background: var(--color-primary);
   }
 
   &.unopened {

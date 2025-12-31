@@ -23,6 +23,7 @@
 
     > .Transition {
       overflow: hidden;
+      background-color: var(--color-background);
       width: 100%;
       height: 100%;
 
@@ -38,6 +39,7 @@
     .composer-wrapper {
       transform: scaleX(1) translateX(0);
       transition: transform var(--select-transition), border-bottom-right-radius var(--select-transition);
+      background-color: #1A1F29;
 
       &::before {
         transform: scaleX(-1) translateX(0);
@@ -65,6 +67,8 @@
     > .Button {
       transform: scale(1);
       opacity: 1;
+      background-color: #1A1F29;
+
       /* stylelint-disable plugin/no-low-performance-animation-properties */
       transition:
         border-radius 0.15s,
@@ -163,8 +167,8 @@
     align-items: flex-end;
 
     width: 100%;
-    max-width: var(--messages-container-width);
-    padding: 0 1rem;
+    // max-width: var(--messages-container-width);
+    // padding: 0 1rem;
 
     transition: top 200ms, transform var(--layer-transition);
 
@@ -258,7 +262,7 @@
 .Composer,
 .MessageSelectToolbar,
 .messaging-disabled {
-  margin-bottom: 1.25rem;
+  // margin-bottom: 1.25rem;
 
   @media (max-width: 600px) {
     margin-bottom: 0.5rem;
@@ -269,6 +273,7 @@
 .MessageSelectToolbar,
 .composer-button,
 .messaging-disabled {
+  background-color: #0E1424;
   position: relative;
   display: flex;
   justify-content: center;
@@ -278,7 +283,7 @@
 .MessageSelectToolbar-inner,
 .composer-button {
   .mask-image-disabled & {
-    border-radius: var(--border-radius-messages);
+    // border-radius: var(--border-radius-messages);
     box-shadow: 0 0.25rem 0.5rem 0.125rem var(--color-default-shadow);
   }
 }

@@ -156,7 +156,7 @@
   }
 
   .Message.own .has-solid-background & {
-    color: var(--color-message-meta-own);
+    color: var(--color-text-black);
   }
 
   .MessageOutgoingStatus {
@@ -166,7 +166,7 @@
     font-size: 1.1875rem;
 
     .Message.own & {
-      color: var(--color-accent-own);
+      color: var(--color-text-black);
     }
   }
 
@@ -207,7 +207,7 @@
 
 .not-outgoing{
   position: static !important;
-  display: block !important;
+  // display: block !important;
   float: none !important;
   margin-left: 0 !important;
   padding: 5px 0 !important;

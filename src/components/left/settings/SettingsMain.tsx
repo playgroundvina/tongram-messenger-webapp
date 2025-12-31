@@ -99,7 +99,7 @@ const SettingsMain: FC<OwnProps & StateProps> = ({
           />
         )}
       </div>
-      <div className="settings-main-menu">
+      <div className="settings-main-menu settings-main-menu--separated">
         <ListItem
           icon="settings"
           narrow
@@ -180,7 +180,7 @@ const SettingsMain: FC<OwnProps & StateProps> = ({
         >
           {lang('AITranslationSettings')}
           <span className="settings-item__current-value">
-            {LangSelected ? JSON.parse(LangSelected).nativeName : 'English'}
+            {LangSelected ? JSON.parse(LangSelected).label : 'English'}
           </span>
         </ListItem>
         <ListItem

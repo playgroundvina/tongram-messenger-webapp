@@ -55,7 +55,7 @@ const SettingsLanguageAITranslation: FC<OwnProps & StateProps> = ({
     setSelectedLanguage(langCode);
     markIsLoading();
 
-    const langSelected = languages?.find((languageItem) => languageItem.langCode === langCode);
+    const langSelected = options?.find((languageItem) => languageItem.value === langCode);
     if (langSelected) {
       window.localStorage.setItem('preferredLanguage', JSON.stringify(langSelected));
       unmarkIsLoading();
@@ -80,10 +80,6 @@ const SettingsLanguageAITranslation: FC<OwnProps & StateProps> = ({
       : { langCode: 'en' }).langCode || 'en';
     const shortLangCode = currentLangCode.substr(0, 2);
 
-    if (currentLangCode !== selectedLanguage) {
-      setSelectedLanguage(currentLangCode);
-    }
-
     return languagesWithVN.map(({ langCode, nativeName, name }) => ({
       value: langCode,
       label: nativeName,
@@ -98,6 +94,12 @@ const SettingsLanguageAITranslation: FC<OwnProps & StateProps> = ({
     isActive,
     onBack: onReset,
   });
+
+  useEffect(() => {
+    if (LangSelected) {
+      setSelectedLanguage(JSON.parse(LangSelected).value);
+    }
+  }, [LangSelected]);
 
   return (
     <div className="settings-content settings-language custom-scroll">

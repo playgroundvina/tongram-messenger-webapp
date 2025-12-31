@@ -220,20 +220,28 @@ const LeftSideMenuItems = ({
         App Store
       </MenuItem>
       <MenuItem customIcon={<img src={tonWalletIcon} alt="Wallet" className="icon" />} disabled={true}>
-        {lang('MenuTonWallet')}
-        <span className="comingSoon">Coming Soon</span>
+        <div className="comingSoon">
+          <p className="title">{lang('MenuTonWallet')}</p>
+          <p className="destructive">Coming Soon</p>
+        </div>
       </MenuItem>
       <MenuItem customIcon={<img src={AITonyIcon} alt="AI Tony" className="icon" />} disabled={true}>
-        {lang('MenuAITony')}
-        <span className="comingSoon">Coming Soon</span>
+        <div className="comingSoon">
+          <p className="title">{lang('MenuAITony')}</p>
+          <p className="destructive">Coming Soon</p>
+        </div>
       </MenuItem>
       <MenuItem customIcon={<img src={CEXIcon} alt="CEX" className="icon" />} disabled={true}>
-        {lang('MenuCexEchange')}
-        <span className="comingSoon">Coming Soon</span>
+        <div className="comingSoon">
+          <p className="title">{lang('MenuCexEchange')}</p>
+          <p className="destructive">Coming Soon</p>
+        </div>
       </MenuItem>
       <MenuItem customIcon={<img src={P2PIcon} alt="P2P" className="icon" />} disabled={true}>
-        {lang('MenuP2PExchange')}
-        <span className="comingSoon">Coming Soon</span>
+        <div className="comingSoon">
+          <p className="title">{lang('MenuP2PExchange')}</p>
+          <p className="destructive">Coming Soon</p>
+        </div>
       </MenuItem>
       <MenuSeparator />
       {/* END Add by JP */}
