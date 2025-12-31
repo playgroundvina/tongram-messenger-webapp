@@ -1,6 +1,6 @@
 import './TranslationButton.scss';
 
-import TongramAiIcon from '../../../../assets/tongramAi.svg';
+import TongramAiIcon from '../../../../assets/tongram-ai.svg';
 
 type OwnProps = {
   onShow: () => void;

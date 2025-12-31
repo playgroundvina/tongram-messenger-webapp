@@ -49,8 +49,8 @@ import appStoreIcon from '../../../assets/app_store.svg';
 import CEXIcon from '../../../assets/cex.svg';
 import P2PIcon from '../../../assets/p2p.svg';
 import AITonyIcon from '../../../assets/robo.svg';
+import tonWalletIcon from '../../../assets/ton-wallet.svg';
 import tonTVIcon from '../../../assets/tontv.svg';
-import tonWalletIcon from '../../../assets/tonWallet.svg';
 
 type OwnProps = {
   onSelectSettings: NoneToVoidFunction;
