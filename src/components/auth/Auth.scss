@@ -36,11 +36,16 @@
   #logo {
     background: url("../../assets/telegram-logo.svg") center no-repeat;
     background-size: 100%;
+    border: 3.22px solid #AFC8FF;
+    border-radius: 100%;
+    padding: 12.89px;
   }
 
   h1 {
     font-size: 1.25rem;
     line-height: 1;
+    color: var(--color-primary);
+
 
     @media (min-width: 600px) {
       font-size: 2rem;
@@ -184,12 +189,13 @@
   .qr-container {
     overflow: hidden;
     border-radius: 1.5rem;
-    background-color: white;
+    background-color: #AFC8FF;
   }
 
   h1 {
     margin: 1.5rem 0 1rem 0;
     font-size: 1.25rem;
+    color: rgba(175, 200, 255, 1);
   }
 
   ol {
@@ -202,6 +208,9 @@
       display: flex;
       margin: 0.75rem 0;
       text-align: left;
+      font-weight: 400;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 1);
 
       &::before {
         content: counter(item);
@@ -217,7 +226,8 @@
         border-radius: 50%;
 
         font-size: 0.875rem;
-        color: white;
+        color: black;
+        font-weight: 600;
 
         background: var(--color-primary);
       }

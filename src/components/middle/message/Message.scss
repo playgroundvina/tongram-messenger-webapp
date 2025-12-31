@@ -2,6 +2,7 @@
 
 // General styles
 .Message {
+  --color-background: #1A1F29;
 
   --background-color: var(--color-background);
   --hover-color: var(--color-reply-hover);
@@ -205,6 +206,8 @@
     --color-text-green: var(--color-accent-own);
     --color-voice-transcribe: var(--color-voice-transcribe-button-own);
     --thumbs-background: var(--color-background-own);
+      color: #000;
+
 
     flex-direction: row-reverse;
 

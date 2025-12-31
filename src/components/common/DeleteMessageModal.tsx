@@ -51,6 +51,7 @@ import Avatar from './Avatar';
 import AvatarList from './AvatarList';
 import Icon from './icons/Icon';
 
+import './DeleteMessageModal.scss';
 import styles from './DeleteMessageModal.module.scss';
 
 export type OwnProps = {

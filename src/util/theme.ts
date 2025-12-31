@@ -62,7 +62,7 @@ export function updatePeerColors(
 ) {
   setPeerColor('0', ['#D45246']);
   setPeerColor('1', ['#F68136']);
-  setPeerColor('2', ['#6C61DF']);
+  setPeerColor('2', ['#AFC8FF']);
   setPeerColor('3', ['#46BA43']);
   setPeerColor('4', ['#5CAFFA']);
   setPeerColor('5', ['#408ACF']);

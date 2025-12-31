@@ -24,6 +24,9 @@
     @include mixins.adapt-padding-to-scrollbar(0.5rem);
     @include mixins.side-panel-section;
     @include mixins.with-vt-type('rightColumn');
+    margin-left: 10px;
+    background-color: #0E1425;
+    border-radius: 18.45px;
 
     .narrow {
       margin-bottom: 0;

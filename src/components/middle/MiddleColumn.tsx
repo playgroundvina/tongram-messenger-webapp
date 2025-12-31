@@ -90,6 +90,7 @@ import Button from '../ui/Button';
 import Transition from '../ui/Transition';
 import ChatLanguageModal from './ChatLanguageModal.async';
 import { DropAreaState } from './composer/DropArea';
+import TranslationBox from './composer/TongramAI/TranslationBox';
 import EmojiInteractionAnimation from './EmojiInteractionAnimation.async';
 import FloatingActionButtons from './FloatingActionButtons';
 import FrozenAccountPlaceholder from './FrozenAccountPlaceholder';
@@ -255,6 +256,9 @@ function MiddleColumn({
   const isScrollDownShown = isScrollDownNeeded && (!isMobile || !hasActiveMiddleSearch);
   const [isNotchShown, setIsNotchShown] = useState<boolean | undefined>();
   const [isUnpinModalOpen, setIsUnpinModalOpen] = useState(false);
+  const [isShowTranslation, setShowTranslation] = useState(false);
+  const [translateValue, setTranslateValue] = useState('');
+  const [translatedText, setTranslatedText] = useState('');
 
   const {
     handleIntersectPinnedMessage,
@@ -564,22 +568,32 @@ function MiddleColumn({
               isBlockingAnimation
               onStop={handleSlideTransitionStop}
             >
-              <MessageList
-                key={`${renderingChatId}-${renderingThreadId}-${renderingMessageListType}`}
-                chatId={renderingChatId!}
-                threadId={renderingThreadId!}
-                type={renderingMessageListType!}
-                isComments={isComments}
-                canPost={renderingCanPost!}
-                onScrollDownToggle={setIsScrollDownShown}
-                onNotchToggle={setIsNotchShown}
-                isReady={isReady}
-                isContactRequirePremium={isContactRequirePremium}
-                paidMessagesStars={paidMessagesStars}
-                withBottomShift={withMessageListBottomShift}
-                withDefaultBg={Boolean(!customBackground && !backgroundColor)}
-                onIntersectPinnedMessage={renderingHandleIntersectPinnedMessage}
-              />
+              {!isShowTranslation ? (
+                <MessageList
+                  key={`${renderingChatId}-${renderingThreadId}-${renderingMessageListType}`}
+                  chatId={renderingChatId!}
+                  threadId={renderingThreadId!}
+                  type={renderingMessageListType!}
+                  isComments={isComments}
+                  canPost={renderingCanPost!}
+                  onScrollDownToggle={setIsScrollDownShown}
+                  onNotchToggle={setIsNotchShown}
+                  isReady={isReady}
+                  isContactRequirePremium={isContactRequirePremium}
+                  paidMessagesStars={paidMessagesStars}
+                  withBottomShift={withMessageListBottomShift}
+                  withDefaultBg={Boolean(!customBackground && !backgroundColor)}
+                  onIntersectPinnedMessage={renderingHandleIntersectPinnedMessage}
+                />
+              ) : (
+                <TranslationBox
+                  onSubmit={(text) => {
+                    setTranslatedText(text);
+                    setShowTranslation(!isShowTranslation);
+                  }}
+                  translateValue={translateValue}
+                />
+              )}
               <div className={footerClassName}>
                 <FloatingActionButtons
                   withScrollDown={renderingIsScrollDownShown}
@@ -599,6 +613,10 @@ function MiddleColumn({
                     editableInputId={EDITABLE_INPUT_ID}
                     editableInputCssSelector={EDITABLE_INPUT_CSS_SELECTOR}
                     inputId="message-input-text"
+                    onOpenAI={() => setShowTranslation(!isShowTranslation)}
+                    isShowTranslation={isShowTranslation}
+                    handleSentToAI={(value) => setTranslateValue(value)}
+                    translatedText={translatedText}
                   />
                 )}
                 {isPinnedMessageList && canUnpin && (

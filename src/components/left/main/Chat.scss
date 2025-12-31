@@ -429,13 +429,13 @@
 
       .ListItem-button {
         --background-color: var(--color-chat-active) !important;
-        --color-text: var(--color-white);
-        --color-text-meta-colored: var(--color-white);
-        --color-text-meta: var(--color-white);
-        --color-text-secondary: var(--color-white);
-        --color-error: var(--color-white);
-        --color-list-icon: var(--color-white);
-        --color-chat-username: var(--color-white);
+        --color-text: var(--color-text-black);
+        --color-text-meta-colored: var(--color-text-black);
+        --color-text-meta: var(--color-text-black);
+        --color-text-secondary: var(--color-text-black);
+        --color-error: var(--color-text-black);
+        --color-list-icon: var(--color-text-black);
+        --color-chat-username: var(--color-text-black);
       }
 
       .icon-muted {

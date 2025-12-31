@@ -1,5 +1,6 @@
 .ComposerEmbeddedMessage {
   --accent-color: var(--color-primary);
+  background-color: #0E1424;
 
   height: 3.125rem;
   /* stylelint-disable-next-line plugin/no-low-performance-animation-properties */
@@ -20,7 +21,7 @@
   &_inner {
     display: flex;
     align-items: center;
-    padding-top: 0.5rem;
+    padding-top: 0.3rem;
   }
 
   & .embedded-left-icon {

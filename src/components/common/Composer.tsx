@@ -182,7 +182,6 @@ import StickerTooltip from '../middle/composer/StickerTooltip.async';
 import SymbolMenuButton from '../middle/composer/SymbolMenuButton';
 import ToDoListModal from '../middle/composer/ToDoListModal.async';
 import TranslationButton from '../middle/composer/TongramAI/TranslationButton';
-import TranslationModal from '../middle/composer/TongramAI/TranslationModal';
 import WebPagePreview from '../middle/composer/WebPagePreview';
 import MessageEffect from '../middle/message/MessageEffect';
 import ReactionSelector from '../middle/message/reactions/ReactionSelector';
@@ -197,6 +196,8 @@ import PaymentMessageConfirmDialog from './PaymentMessageConfirmDialog';
 import ReactionAnimatedEmoji from './reactions/ReactionAnimatedEmoji';
 
 import './Composer.scss';
+
+import SentAI from '../../assets/sentAI.svg';
 
 type ComposerType = 'messageList' | 'story';
 
@@ -214,10 +215,14 @@ type OwnProps = {
   editableInputId: string;
   className?: string;
   inputPlaceholder?: TeactNode | string;
+  isShowTranslation: boolean;
+  translatedText?: string;
   onDropHide?: NoneToVoidFunction;
   onForward?: NoneToVoidFunction;
   onFocus?: NoneToVoidFunction;
   onBlur?: NoneToVoidFunction;
+  onOpenAI?: NoneToVoidFunction;
+  handleSentToAI: (value: string) => void;
 };
 
 type StateProps =
@@ -433,10 +438,14 @@ const Composer: FC<OwnProps & StateProps> = ({
   isAppConfigLoaded,
   insertingPeerIdMention,
   pollMaxAnswers,
+  isShowTranslation,
+  translatedText,
   onDropHide,
   onFocus,
   onBlur,
   onForward,
+  onOpenAI,
+  handleSentToAI,
 }) => {
   const {
     sendMessage,
@@ -482,7 +491,6 @@ const Composer: FC<OwnProps & StateProps> = ({
 
   const [getHtml, setHtml] = useSignal('');
   const [isMounted, setIsMounted] = useState(false);
-  const [isShowTranslation, setShowTranslation] = useState(false);
 
   const getSelectionRange = useGetSelectionRange(editableInputCssSelector);
   const lastMessageSendTimeSeconds = useRef<number>();
@@ -527,6 +535,11 @@ const Composer: FC<OwnProps & StateProps> = ({
 
     closeReactionPicker();
   }, [isInMessageList, storyId]);
+
+  useEffect(() => {
+    if (!translatedText) return;
+    setHtml(translatedText);
+  }, [setHtml, translatedText]);
 
   useEffect(() => {
     lastMessageSendTimeSeconds.current = undefined;
@@ -1915,6 +1928,12 @@ const Composer: FC<OwnProps & StateProps> = ({
     }
   }, [mainButtonState, handleEditComplete, handleSendWithConfirmation]);
 
+  const handleSentTextToTranslate = () => {
+    if (inputRef.current && inputRef.current.innerText) {
+      handleSentToAI(inputRef.current.innerText);
+    }
+  };
+
   const withBotCommands = isChatWithBot && botMenuButton?.type === 'commands' && !editingMessage
     && botCommands !== false && !activeVoiceRecording;
 
@@ -1924,575 +1943,593 @@ const Composer: FC<OwnProps & StateProps> = ({
   const prevShouldRenderPaidBadge = usePrevious(shouldRenderPaidBadge);
 
   return (
-    <div className={fullClassName}>
-      {isInMessageList && canAttachMedia && isReady && (
-        <DropArea
-          isOpen={dropAreaState !== DropAreaState.None}
-          withQuick={dropAreaState === DropAreaState.QuickFile || prevDropAreaState === DropAreaState.QuickFile}
-          onHide={onDropHide!}
-          onFileSelect={handleFileSelect}
-          editingMessage={editingMessage}
+    <div className="main">
+      {isInMessageList && (
+        <ComposerEmbeddedMessage
+          onClear={handleEmbeddedClear}
+          shouldForceShowEditing={Boolean(shouldForceShowEditing && editingMessage)}
+          chatId={chatId}
+          threadId={threadId}
+          messageListType={messageListType}
         />
       )}
-      {shouldRenderReactionSelector && !isNeedPremium && (
-        <ReactionSelector
-          topReactions={topReactions}
-          allAvailableReactions={availableReactions}
-          onToggleReaction={handleToggleReaction}
-          isPrivate
+      <div className={fullClassName}>
+        {isInMessageList && canAttachMedia && isReady && (
+          <DropArea
+            isOpen={dropAreaState !== DropAreaState.None}
+            withQuick={dropAreaState === DropAreaState.QuickFile || prevDropAreaState === DropAreaState.QuickFile}
+            onHide={onDropHide!}
+            onFileSelect={handleFileSelect}
+            editingMessage={editingMessage}
+          />
+        )}
+        {shouldRenderReactionSelector && !isNeedPremium && (
+          <ReactionSelector
+            topReactions={topReactions}
+            allAvailableReactions={availableReactions}
+            onToggleReaction={handleToggleReaction}
+            isPrivate
+            isReady={isReady}
+            canBuyPremium={canBuyPremium}
+            isCurrentUserPremium={isCurrentUserPremium}
+            isInSavedMessages={isChatWithSelf}
+            isInStoryViewer={isInStoryViewer}
+            canPlayAnimatedEmojis={canPlayAnimatedEmojis}
+            onShowMore={handleReactionPickerOpen}
+            className={reactionSelectorTransitonClassNames}
+          />
+        )}
+        <AttachmentModal
+          chatId={chatId}
+          threadId={threadId}
+          canShowCustomSendMenu={canShowCustomSendMenu}
+          attachments={attachments}
+          getHtml={getHtml}
           isReady={isReady}
-          canBuyPremium={canBuyPremium}
-          isCurrentUserPremium={isCurrentUserPremium}
-          isInSavedMessages={isChatWithSelf}
-          isInStoryViewer={isInStoryViewer}
-          canPlayAnimatedEmojis={canPlayAnimatedEmojis}
-          onShowMore={handleReactionPickerOpen}
-          className={reactionSelectorTransitonClassNames}
+          shouldForceCompression={shouldForceCompression}
+          shouldForceAsFile={shouldForceAsFile}
+          isForCurrentMessageList={isForCurrentMessageList}
+          isForMessage={isInMessageList}
+          shouldSchedule={canSchedule && isInScheduledList}
+          canSchedule={canSchedule}
+          forceDarkTheme={isInStoryViewer}
+          onCaptionUpdate={onCaptionUpdate}
+          onSendSilent={handleSendSilentAttachments}
+          onSend={handleSendAttachmentsFromModal}
+          onSendScheduled={handleSendScheduledAttachments}
+          onFileAppend={handleAppendFiles}
+          onClear={handleClearAttachments}
+          onAttachmentsUpdate={handleSetAttachments}
+          onCustomEmojiSelect={handleCustomEmojiSelectAttachmentModal}
+          onRemoveSymbol={removeSymbolAttachmentModal}
+          onEmojiSelect={insertTextAndUpdateCursorAttachmentModal}
+          editingMessage={editingMessage}
+          onSendWhenOnline={handleSendWhenOnline}
+          canScheduleUntilOnline={canScheduleUntilOnline && !isViewOnceEnabled}
+          paidMessagesStars={paidMessagesStars}
         />
-      )}
-      <AttachmentModal
-        chatId={chatId}
-        threadId={threadId}
-        canShowCustomSendMenu={canShowCustomSendMenu}
-        attachments={attachments}
-        getHtml={getHtml}
-        isReady={isReady}
-        shouldForceCompression={shouldForceCompression}
-        shouldForceAsFile={shouldForceAsFile}
-        isForCurrentMessageList={isForCurrentMessageList}
-        isForMessage={isInMessageList}
-        shouldSchedule={canSchedule && isInScheduledList}
-        canSchedule={canSchedule}
-        forceDarkTheme={isInStoryViewer}
-        onCaptionUpdate={onCaptionUpdate}
-        onSendSilent={handleSendSilentAttachments}
-        onSend={handleSendAttachmentsFromModal}
-        onSendScheduled={handleSendScheduledAttachments}
-        onFileAppend={handleAppendFiles}
-        onClear={handleClearAttachments}
-        onAttachmentsUpdate={handleSetAttachments}
-        onCustomEmojiSelect={handleCustomEmojiSelectAttachmentModal}
-        onRemoveSymbol={removeSymbolAttachmentModal}
-        onEmojiSelect={insertTextAndUpdateCursorAttachmentModal}
-        editingMessage={editingMessage}
-        onSendWhenOnline={handleSendWhenOnline}
-        canScheduleUntilOnline={canScheduleUntilOnline && !isViewOnceEnabled}
-        paidMessagesStars={paidMessagesStars}
-      />
-      <PollModal
-        isOpen={pollModal.isOpen}
-        isQuiz={pollModal.isQuiz}
-        shouldBeAnonymous={isChannel}
-        maxOptionsCount={pollMaxAnswers}
-        onClear={closePollModal}
-        onSend={handlePollSend}
-      />
-      <ToDoListModal
-        modal={todoListModal}
-        onClear={closeTodoListModal}
-        onSend={handleToDoListSend}
-      />
-      <TranslationModal
-        messageText={inputRef.current?.innerHTML}
-        isOpen={isShowTranslation}
-        onClose={() => setShowTranslation(false)}
-        onCloseAnimationEnd={() => setShowTranslation(false)}
-        onSubmit={(text) => {
-          setShowTranslation(false);
-          setHtml(text);
-        }}
-      />
-      <SendAsMenu
-        isOpen={isSendAsMenuOpen}
-        onClose={closeSendAsMenu}
-        chatId={chatId}
-        selectedSendAsId={sendAsId}
-        sendAsPeerIds={sendAsPeerIds}
-        isCurrentUserPremium={isCurrentUserPremium}
-      />
-      <MentionTooltip
-        isOpen={isMentionTooltipOpen}
-        filteredUsers={mentionFilteredUsers}
-        onInsertUserName={insertMention}
-        onClose={closeMentionTooltip}
-      />
-      <ChatCommandTooltip
-        isOpen={isChatCommandTooltipOpen}
-        chatId={chatId}
-        withUsername={Boolean(chatBotCommands)}
-        botCommands={botTooltipCommands}
-        quickReplies={quickReplyCommands}
-        getHtml={getHtml}
-        self={currentUser!}
-        quickReplyMessages={quickReplyMessages}
-        onClick={handleBotCommandSelect}
-        onClose={closeChatCommandTooltip}
-      />
-      <div className={
-        buildClassName('composer-wrapper', isInStoryViewer && 'with-story-tweaks', isNeedPremium && 'is-need-premium')
-      }
-      >
-        {!isNeedPremium && (
-          <svg className="svg-appendix" width="9" height="20">
-            <defs>
-              <filter
-                x="-50%"
-                y="-14.7%"
-                width="200%"
-                height="141.2%"
-                filterUnits="objectBoundingBox"
-                id="composerAppendix"
-              >
-                <feOffset dy="1" in="SourceAlpha" result="shadowOffsetOuter1" />
-                <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1" />
-                <feColorMatrix
-                  values="0 0 0 0 0.0621962482 0 0 0 0 0.138574144 0 0 0 0 0.185037364 0 0 0 0.15 0"
-                  in="shadowBlurOuter1"
+        <PollModal
+          isOpen={pollModal.isOpen}
+          isQuiz={pollModal.isQuiz}
+          shouldBeAnonymous={isChannel}
+          maxOptionsCount={pollMaxAnswers}
+          onClear={closePollModal}
+          onSend={handlePollSend}
+        />
+        <ToDoListModal
+          modal={todoListModal}
+          onClear={closeTodoListModal}
+          onSend={handleToDoListSend}
+        />
+        <SendAsMenu
+          isOpen={isSendAsMenuOpen}
+          onClose={closeSendAsMenu}
+          chatId={chatId}
+          selectedSendAsId={sendAsId}
+          sendAsPeerIds={sendAsPeerIds}
+          isCurrentUserPremium={isCurrentUserPremium}
+        />
+        <MentionTooltip
+          isOpen={isMentionTooltipOpen}
+          filteredUsers={mentionFilteredUsers}
+          onInsertUserName={insertMention}
+          onClose={closeMentionTooltip}
+        />
+        <ChatCommandTooltip
+          isOpen={isChatCommandTooltipOpen}
+          chatId={chatId}
+          withUsername={Boolean(chatBotCommands)}
+          botCommands={botTooltipCommands}
+          quickReplies={quickReplyCommands}
+          getHtml={getHtml}
+          self={currentUser!}
+          quickReplyMessages={quickReplyMessages}
+          onClick={handleBotCommandSelect}
+          onClose={closeChatCommandTooltip}
+        />
+        <div className={
+          buildClassName('composer-wrapper', isInStoryViewer && 'with-story-tweaks', isNeedPremium && 'is-need-premium')
+        }
+        >
+          {!isNeedPremium && (
+            <svg className="svg-appendix" width="9" height="20">
+              <defs>
+                <filter
+                  x="-50%"
+                  y="-14.7%"
+                  width="200%"
+                  height="141.2%"
+                  filterUnits="objectBoundingBox"
+                  id="composerAppendix"
+                >
+                  <feOffset dy="1" in="SourceAlpha" result="shadowOffsetOuter1" />
+                  <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1" />
+                  <feColorMatrix
+                    values="0 0 0 0 0.0621962482 0 0 0 0 0.138574144 0 0 0 0 0.185037364 0 0 0 0.15 0"
+                    in="shadowBlurOuter1"
+                  />
+                </filter>
+              </defs>
+              <g fill="none" fill-rule="evenodd">
+                <path
+                  d="M6 17H0V0c.193 2.84.876 5.767 2.05 8.782.904 2.325 2.446 4.485 4.625 6.48A1 1 0 016 17z"
+                  fill="#000"
+                  filter="url(#composerAppendix)"
                 />
-              </filter>
-            </defs>
-            <g fill="none" fill-rule="evenodd">
-              <path
-                d="M6 17H0V0c.193 2.84.876 5.767 2.05 8.782.904 2.325 2.446 4.485 4.625 6.48A1 1 0 016 17z"
-                fill="#000"
-                filter="url(#composerAppendix)"
-              />
-              <path
-                d="M6 17H0V0c.193 2.84.876 5.767 2.05 8.782.904 2.325 2.446 4.485 4.625 6.48A1 1 0 016 17z"
-                fill="#FFF"
-                className="corner"
-              />
-            </g>
-          </svg>
-        )}
-        {isInMessageList && (
-          <>
-            <InlineBotTooltip
-              isOpen={isInlineBotTooltipOpen}
-              botId={inlineBotId}
-              isGallery={isInlineBotTooltipGallery}
-              inlineBotResults={inlineBotResults}
-              switchPm={inlineBotSwitchPm}
-              switchWebview={inlineBotSwitchWebview}
-              loadMore={loadMoreForInlineBot}
-              isSavedMessages={isChatWithSelf}
-              canSendGifs={canSendGifs}
-              isCurrentUserPremium={isCurrentUserPremium}
-              onSelectResult={handleInlineBotSelect}
-              onClose={closeInlineBotTooltip}
-            />
-            <ComposerEmbeddedMessage
-              onClear={handleEmbeddedClear}
-              shouldForceShowEditing={Boolean(shouldForceShowEditing && editingMessage)}
-              chatId={chatId}
-              threadId={threadId}
-              messageListType={messageListType}
-            />
-            <WebPagePreview
-              chatId={chatId}
-              threadId={threadId}
-              isDisabled={!canAttachEmbedLinks || hasAttachments || !hasText}
-              isEditing={Boolean(editingMessage)}
-            />
-          </>
-        )}
-        <div className={buildClassName('message-input-wrapper', getPeerColorClass(currentUser))}>
+                <path
+                  d="M6 17H0V0c.193 2.84.876 5.767 2.05 8.782.904 2.325 2.446 4.485 4.625 6.48A1 1 0 016 17z"
+                  fill="#FFF"
+                  className="corner"
+                />
+              </g>
+            </svg>
+          )}
           {isInMessageList && (
             <>
-              {withBotMenuButton && (
-                <BotMenuButton
-                  isOpen={isBotMenuButtonOpen}
-                  text={botMenuButton.text}
-                  isDisabled={Boolean(activeVoiceRecording)}
-                  onClick={handleClickBotMenu}
-                />
-              )}
-              {withBotCommands && (
-                <ResponsiveHoverButton
-                  className={buildClassName(
-                    'bot-commands', 'composer-action-button',
-                  )}
-                  round
-                  disabled={botCommands === undefined}
-                  color="translucent"
-                  onActivate={handleActivateBotCommandMenu}
-                  ariaLabel="Open bot command keyboard"
-                >
-                  <Icon name="bot-commands-filled" />
-                </ResponsiveHoverButton>
-              )}
-              {canShowSendAs && sendAsPeer && (
-                <Button
-                  round
-                  color="translucent"
-                  onClick={isSendAsMenuOpen ? closeSendAsMenu : handleSendAsMenuOpen}
-                  ariaLabel={oldLang('SendMessageAsTitle')}
-                  className={buildClassName(
-                    'send-as-button',
-                    'composer-action-button',
-                    shouldAnimateSendAsButtonRef.current && 'appear-animation',
-                  )}
-                >
-                  <Avatar
-                    peer={sendAsPeer}
-                    size="tiny"
-                  />
-                </Button>
-              )}
+              <InlineBotTooltip
+                isOpen={isInlineBotTooltipOpen}
+                botId={inlineBotId}
+                isGallery={isInlineBotTooltipGallery}
+                inlineBotResults={inlineBotResults}
+                switchPm={inlineBotSwitchPm}
+                switchWebview={inlineBotSwitchWebview}
+                loadMore={loadMoreForInlineBot}
+                isSavedMessages={isChatWithSelf}
+                canSendGifs={canSendGifs}
+                isCurrentUserPremium={isCurrentUserPremium}
+                onSelectResult={handleInlineBotSelect}
+                onClose={closeInlineBotTooltip}
+              />
+              {/* <ComposerEmbeddedMessage
+                onClear={handleEmbeddedClear}
+                shouldForceShowEditing={Boolean(shouldForceShowEditing && editingMessage)}
+                chatId={chatId}
+                threadId={threadId}
+                messageListType={messageListType}
+              /> */}
+              <WebPagePreview
+                chatId={chatId}
+                threadId={threadId}
+                isDisabled={!canAttachEmbedLinks || hasAttachments || !hasText}
+                isEditing={Boolean(editingMessage)}
+              />
             </>
           )}
-          {((!isComposerBlocked || canSendGifs || canSendStickers) && !isNeedPremium && !isAccountFrozen) && (
-            <SymbolMenuButton
+          <div className={buildClassName('message-input-wrapper', getPeerColorClass(currentUser))}>
+            {isInMessageList && (
+              <>
+                {withBotMenuButton && (
+                  <BotMenuButton
+                    isOpen={isBotMenuButtonOpen}
+                    text={botMenuButton.text}
+                    isDisabled={Boolean(activeVoiceRecording)}
+                    onClick={handleClickBotMenu}
+                  />
+                )}
+                {withBotCommands && (
+                  <ResponsiveHoverButton
+                    className={buildClassName(
+                      'bot-commands', 'composer-action-button',
+                    )}
+                    round
+                    disabled={botCommands === undefined}
+                    color="translucent"
+                    onActivate={handleActivateBotCommandMenu}
+                    ariaLabel="Open bot command keyboard"
+                  >
+                    <Icon name="bot-commands-filled" />
+                  </ResponsiveHoverButton>
+                )}
+                {canShowSendAs && sendAsPeer && (
+                  <Button
+                    round
+                    color="translucent"
+                    onClick={isSendAsMenuOpen ? closeSendAsMenu : handleSendAsMenuOpen}
+                    ariaLabel={oldLang('SendMessageAsTitle')}
+                    className={buildClassName(
+                      'send-as-button',
+                      'composer-action-button',
+                      shouldAnimateSendAsButtonRef.current && 'appear-animation',
+                    )}
+                  >
+                    <Avatar
+                      peer={sendAsPeer}
+                      size="tiny"
+                    />
+                  </Button>
+                )}
+              </>
+            )}
+            {((!isComposerBlocked || canSendGifs || canSendStickers) && !isNeedPremium && !isAccountFrozen) && (
+              <SymbolMenuButton
+                chatId={chatId}
+                threadId={threadId}
+                isMobile={isMobile}
+                isReady={isReady}
+                isSymbolMenuOpen={isSymbolMenuOpen}
+                openSymbolMenu={openSymbolMenu}
+                closeSymbolMenu={closeSymbolMenu}
+                canSendStickers={canSendStickers}
+                canSendGifs={canSendGifs}
+                isMessageComposer={isInMessageList}
+                onGifSelect={handleGifSelect}
+                onStickerSelect={handleStickerSelect}
+                onCustomEmojiSelect={handleCustomEmojiSelect}
+                onRemoveSymbol={removeSymbol}
+                onEmojiSelect={insertTextAndUpdateCursor}
+                closeBotCommandMenu={closeBotCommandMenu}
+                closeSendAsMenu={closeSendAsMenu}
+                isSymbolMenuForced={isSymbolMenuForced}
+                canSendPlainText={!isComposerBlocked}
+                inputCssSelector={editableInputCssSelector}
+                idPrefix={type}
+                forceDarkTheme={isInStoryViewer}
+              />
+            )}
+            <MessageInput
+              ref={inputRef}
+              id={inputId}
+              editableInputId={editableInputId}
+              customEmojiPrefix={type}
+              isStoryInput={isInStoryViewer}
               chatId={chatId}
-              threadId={threadId}
-              isMobile={isMobile}
-              isReady={isReady}
-              isSymbolMenuOpen={isSymbolMenuOpen}
-              openSymbolMenu={openSymbolMenu}
-              closeSymbolMenu={closeSymbolMenu}
-              canSendStickers={canSendStickers}
-              canSendGifs={canSendGifs}
-              isMessageComposer={isInMessageList}
-              onGifSelect={handleGifSelect}
-              onStickerSelect={handleStickerSelect}
-              onCustomEmojiSelect={handleCustomEmojiSelect}
-              onRemoveSymbol={removeSymbol}
-              onEmojiSelect={insertTextAndUpdateCursor}
-              closeBotCommandMenu={closeBotCommandMenu}
-              closeSendAsMenu={closeSendAsMenu}
-              isSymbolMenuForced={isSymbolMenuForced}
               canSendPlainText={!isComposerBlocked}
-              inputCssSelector={editableInputCssSelector}
-              idPrefix={type}
-              forceDarkTheme={isInStoryViewer}
+              threadId={threadId}
+              isReady={isReady}
+              isActive={!hasAttachments}
+              getHtml={getHtml}
+              placeholder={placeholder}
+              timedPlaceholderDate={timedPlaceholderDate}
+              timedPlaceholderLangKey={timedPlaceholderLangKey}
+              forcedPlaceholder={inlineBotHelp}
+              canAutoFocus={isReady && isForCurrentMessageList && !hasAttachments && isInMessageList}
+              noFocusInterception={hasAttachments}
+              shouldSuppressFocus={isMobile && isSymbolMenuOpen}
+              shouldSuppressTextFormatter={isEmojiTooltipOpen || isMentionTooltipOpen || isInlineBotTooltipOpen}
+              onUpdate={setHtml}
+              onSend={onSend}
+              onSuppressedFocus={closeSymbolMenu}
+              onFocus={markInputHasFocus}
+              onBlur={unmarkInputHasFocus}
+              isNeedPremium={isNeedPremium}
+              messageListType={messageListType}
             />
-          )}
-          <MessageInput
-            ref={inputRef}
-            id={inputId}
-            editableInputId={editableInputId}
-            customEmojiPrefix={type}
-            isStoryInput={isInStoryViewer}
-            chatId={chatId}
-            canSendPlainText={!isComposerBlocked}
-            threadId={threadId}
-            isReady={isReady}
-            isActive={!hasAttachments}
-            getHtml={getHtml}
-            placeholder={placeholder}
-            timedPlaceholderDate={timedPlaceholderDate}
-            timedPlaceholderLangKey={timedPlaceholderLangKey}
-            forcedPlaceholder={inlineBotHelp}
-            canAutoFocus={isReady && isForCurrentMessageList && !hasAttachments && isInMessageList}
-            noFocusInterception={hasAttachments}
-            shouldSuppressFocus={isMobile && isSymbolMenuOpen}
-            shouldSuppressTextFormatter={isEmojiTooltipOpen || isMentionTooltipOpen || isInlineBotTooltipOpen}
-            onUpdate={setHtml}
-            onSend={onSend}
-            onSuppressedFocus={closeSymbolMenu}
-            onFocus={markInputHasFocus}
-            onBlur={unmarkInputHasFocus}
-            isNeedPremium={isNeedPremium}
-            messageListType={messageListType}
-          />
-          {isInMessageList && (
-            <>
-              {isInlineBotLoading && Boolean(inlineBotId) && (
-                <Spinner color="gray" />
-              )}
-              <Transition
-                className="composer-action-buttons-container"
-                slideClassName="composer-action-buttons"
-                activeKey={Number(hasText)}
-                direction="inverse"
-                name="slideFadeAndroid"
-              >
-                {!hasText && (
-                  <>
-                    {isChannel && (
-                      <Transition className="composer-action-button" name="reveal" activeKey={Number(isSilentPosting)}>
+            {isInMessageList && (
+              <>
+                {isInlineBotLoading && Boolean(inlineBotId) && (
+                  <Spinner color="gray" />
+                )}
+                <Transition
+                  className="composer-action-buttons-container"
+                  slideClassName="composer-action-buttons"
+                  activeKey={Number(hasText)}
+                  direction="inverse"
+                  name="slideFadeAndroid"
+                >
+                  {!hasText && (
+                    <>
+                      {isChannel && (
+                        <Transition
+                          className="composer-action-button"
+                          name="reveal"
+                          activeKey={Number(isSilentPosting)}
+                        >
+                          <Button
+                            round
+                            faded
+                            className="composer-action-button"
+                            color="translucent"
+                            onClick={handleToggleSilentPosting}
+                            ariaLabel={lang(
+                              isSilentPosting ? 'AriaComposerSilentPostingDisable' : 'AriaComposerSilentPostingEnable',
+                            )}
+                          >
+                            <Icon name={isSilentPosting ? 'mute' : 'unmute'} />
+                          </Button>
+                        </Transition>
+                      )}
+                      {withScheduledButton && (
+                        <Button
+                          round
+                          faded
+                          className="composer-action-button scheduled-button"
+                          color="translucent"
+                          onClick={handleAllScheduledClick}
+                          ariaLabel={lang('AriaComposerOpenScheduled')}
+                        >
+                          <Icon name="scheduled" />
+                        </Button>
+                      )}
+                      {shouldShowGiftButton && (
                         <Button
                           round
                           faded
                           className="composer-action-button"
                           color="translucent"
-                          onClick={handleToggleSilentPosting}
-                          ariaLabel={lang(
-                            isSilentPosting ? 'AriaComposerSilentPostingDisable' : 'AriaComposerSilentPostingEnable',
-                          )}
+                          onClick={handleGiftClick}
                         >
-                          <Icon name={isSilentPosting ? 'mute' : 'unmute'} />
+                          <Icon name="gift" />
                         </Button>
-                      </Transition>
-                    )}
-                    {withScheduledButton && (
-                      <Button
-                        round
-                        faded
-                        className="composer-action-button scheduled-button"
-                        color="translucent"
-                        onClick={handleAllScheduledClick}
-                        ariaLabel={lang('AriaComposerOpenScheduled')}
-                      >
-                        <Icon name="scheduled" />
-                      </Button>
-                    )}
-                    {shouldShowGiftButton && (
-                      <Button
-                        round
-                        faded
-                        className="composer-action-button"
-                        color="translucent"
-                        onClick={handleGiftClick}
-                      >
-                        <Icon name="gift" />
-                      </Button>
-                    )}
-                    {shouldShowSuggestedPostButton && (
-                      <Button
-                        round
-                        faded
-                        className="composer-action-button"
-                        color="translucent"
-                        onClick={handleSuggestPostClick}
-                      >
-                        <Icon name="cash-circle" />
-                      </Button>
-                    )}
-                    {Boolean(botKeyboardMessageId) && !activeVoiceRecording && !editingMessage && (
-                      <ResponsiveHoverButton
-                        className={buildClassName('composer-action-button', isBotKeyboardOpen && 'activated')}
-                        round
-                        color="translucent"
-                        onActivate={openBotKeyboard}
-                        ariaLabel={lang('AriaComposerBotKeyboard')}
-                      >
-                        <Icon name="bot-command" />
-                      </ResponsiveHoverButton>
-                    )}
-                  </>
-                )}
-              </Transition>
-            </>
-          )}
-          {activeVoiceRecording && Boolean(currentRecordTime) && (
-            <span className="recording-state">
-              {formatVoiceRecordDuration(currentRecordTime - startRecordTimeRef.current!)}
-            </span>
-          )}
-          <TranslationButton onShow={() => setShowTranslation(true)} />
-          {!isNeedPremium && (
-            <AttachMenu
+                      )}
+                      {shouldShowSuggestedPostButton && (
+                        <Button
+                          round
+                          faded
+                          className="composer-action-button"
+                          color="translucent"
+                          onClick={handleSuggestPostClick}
+                        >
+                          <Icon name="cash-circle" />
+                        </Button>
+                      )}
+                      {Boolean(botKeyboardMessageId) && !activeVoiceRecording && !editingMessage && (
+                        <ResponsiveHoverButton
+                          className={buildClassName('composer-action-button', isBotKeyboardOpen && 'activated')}
+                          round
+                          color="translucent"
+                          onActivate={openBotKeyboard}
+                          ariaLabel={lang('AriaComposerBotKeyboard')}
+                        >
+                          <Icon name="bot-command" />
+                        </ResponsiveHoverButton>
+                      )}
+                    </>
+                  )}
+                </Transition>
+              </>
+            )}
+            {activeVoiceRecording && Boolean(currentRecordTime) && (
+              <span className="recording-state">
+                {formatVoiceRecordDuration(currentRecordTime - startRecordTimeRef.current!)}
+              </span>
+            )}
+            {!isNeedPremium && !isShowTranslation && (
+              <AttachMenu
+                chatId={chatId}
+                threadId={threadId}
+                editingMessage={editingMessage}
+                canEditMedia={canMediaBeReplaced}
+                isButtonVisible={!activeVoiceRecording}
+                canAttachMedia={canAttachMedia}
+                canAttachPolls={canAttachPolls}
+                canAttachToDoLists={canAttachToDoLists}
+                canSendPhotos={canSendPhotos}
+                canSendVideos={canSendVideos}
+                canSendDocuments={canSendDocuments}
+                canSendAudios={canSendAudios}
+                onFileSelect={handleFileSelect}
+                onPollCreate={openPollModal}
+                onTodoListCreate={handleTodoListCreate}
+                isScheduled={isInScheduledList}
+                attachBots={isInMessageList ? attachBots : undefined}
+                peerType={attachMenuPeerType}
+                shouldCollectDebugLogs={shouldCollectDebugLogs}
+                theme={theme}
+                onMenuOpen={onAttachMenuOpen}
+                onMenuClose={onAttachMenuClose}
+                messageListType={messageListType}
+                paidMessagesStars={paidMessagesStars}
+              />
+            )}
+            <TranslationButton onShow={() => onOpenAI?.()} />
+
+            {isInMessageList && Boolean(botKeyboardMessageId) && (
+              <BotKeyboardMenu
+                messageId={botKeyboardMessageId}
+                threadId={threadId}
+                isOpen={isBotKeyboardOpen}
+                onClose={closeBotKeyboard}
+              />
+            )}
+            {isInMessageList && botCommands && (
+              <BotCommandMenu
+                isOpen={isBotCommandMenuOpen}
+                botCommands={botCommands}
+                onClose={closeBotCommandMenu}
+              />
+            )}
+            <CustomEmojiTooltip
+              key={`custom-emoji-tooltip-${editableInputId}`}
+              chatId={chatId}
+              isOpen={isCustomEmojiTooltipOpen}
+              onCustomEmojiSelect={insertCustomEmoji}
+              addRecentCustomEmoji={addRecentCustomEmoji}
+              onClose={closeCustomEmojiTooltip}
+            />
+            <StickerTooltip
+              key={`sticker-tooltip-${editableInputId}`}
               chatId={chatId}
               threadId={threadId}
-              editingMessage={editingMessage}
-              canEditMedia={canMediaBeReplaced}
-              isButtonVisible={!activeVoiceRecording}
-              canAttachMedia={canAttachMedia}
-              canAttachPolls={canAttachPolls}
-              canAttachToDoLists={canAttachToDoLists}
-              canSendPhotos={canSendPhotos}
-              canSendVideos={canSendVideos}
-              canSendDocuments={canSendDocuments}
-              canSendAudios={canSendAudios}
-              onFileSelect={handleFileSelect}
-              onPollCreate={openPollModal}
-              onTodoListCreate={handleTodoListCreate}
-              isScheduled={isInScheduledList}
-              attachBots={isInMessageList ? attachBots : undefined}
-              peerType={attachMenuPeerType}
-              shouldCollectDebugLogs={shouldCollectDebugLogs}
-              theme={theme}
-              onMenuOpen={onAttachMenuOpen}
-              onMenuClose={onAttachMenuClose}
-              messageListType={messageListType}
-              paidMessagesStars={paidMessagesStars}
+              isOpen={isStickerTooltipOpen}
+              onStickerSelect={handleStickerSelect}
+              onClose={closeStickerTooltip}
             />
-          )}
-          {isInMessageList && Boolean(botKeyboardMessageId) && (
-            <BotKeyboardMenu
-              messageId={botKeyboardMessageId}
-              threadId={threadId}
-              isOpen={isBotKeyboardOpen}
-              onClose={closeBotKeyboard}
-            />
-          )}
-          {isInMessageList && botCommands && (
-            <BotCommandMenu
-              isOpen={isBotCommandMenuOpen}
-              botCommands={botCommands}
-              onClose={closeBotCommandMenu}
-            />
-          )}
-          <CustomEmojiTooltip
-            key={`custom-emoji-tooltip-${editableInputId}`}
-            chatId={chatId}
-            isOpen={isCustomEmojiTooltipOpen}
-            onCustomEmojiSelect={insertCustomEmoji}
-            addRecentCustomEmoji={addRecentCustomEmoji}
-            onClose={closeCustomEmojiTooltip}
-          />
-          <StickerTooltip
-            key={`sticker-tooltip-${editableInputId}`}
-            chatId={chatId}
-            threadId={threadId}
-            isOpen={isStickerTooltipOpen}
-            onStickerSelect={handleStickerSelect}
-            onClose={closeStickerTooltip}
-          />
-          <EmojiTooltip
-            key={`emoji-tooltip-${editableInputId}`}
-            isOpen={isEmojiTooltipOpen}
-            emojis={filteredEmojis}
-            customEmojis={filteredCustomEmojis}
-            addRecentEmoji={addRecentEmoji}
-            addRecentCustomEmoji={addRecentCustomEmoji}
-            onEmojiSelect={insertEmoji}
-            onCustomEmojiSelect={insertEmoji}
-            onClose={closeEmojiTooltip}
-          />
-        </div>
-      </div>
-      {canSendOneTimeMedia && activeVoiceRecording && (
-        <Button
-          className={buildClassName('view-once', isViewOnceEnabled && 'active')}
-          round
-          color="secondary"
-          ariaLabel={oldLang('Chat.PlayOnceVoiceMessageTooltip')}
-          onClick={toogleViewOnceEnabled}
-        >
-          <Icon name="view-once" />
-          <Icon name="one-filled" />
-        </Button>
-      )}
-      {activeVoiceRecording && (
-        <Button
-          round
-          color="danger"
-          className="cancel"
-          onClick={stopRecordingVoice}
-          ariaLabel="Cancel voice recording"
-        >
-          <Icon name="delete" />
-        </Button>
-      )}
-      {isInStoryViewer && !activeVoiceRecording && (
-        <Button
-          round
-          className="story-reaction-button"
-          color="secondary"
-          onClick={handleLikeStory}
-          onContextMenu={handleStoryPickerContextMenu}
-          onMouseDown={handleBeforeStoryPickerContextMenu}
-          ariaLabel={oldLang('AccDescrLike')}
-          ref={storyReactionRef}
-        >
-          {sentStoryReaction && (
-            <ReactionAnimatedEmoji
-              key={getReactionKey(sentStoryReaction)}
-              containerId={getStoryKey(chatId, storyId!)}
-              reaction={sentStoryReaction}
-              withEffectOnly={isSentStoryReactionHeart}
-            />
-          )}
-          {(!sentStoryReaction || isSentStoryReactionHeart) && (
-            <Icon name="heart" className={buildClassName(isSentStoryReactionHeart && 'story-reaction-heart')} />
-          )}
-        </Button>
-      )}
-      <Button
-        ref={mainButtonRef}
-        round
-        color="secondary"
-        className={buildClassName(
-          mainButtonState,
-          'main-button',
-          !isReady && 'not-ready',
-          activeVoiceRecording && 'recording',
-        )}
-        disabled={areVoiceMessagesNotAllowed}
-        allowDisabledClick
-        noFastClick
-        ariaLabel={oldLang(sendButtonAriaLabel)}
-        onClick={mainButtonHandler}
-        onContextMenu={
-          mainButtonState === MainButtonState.Send && canShowCustomSendMenu ? handleContextMenu : undefined
-        }
-      >
-        <Icon name="send" />
-        <Icon name="microphone-alt" />
-        {onForward && <Icon name="forward" />}
-        {isInMessageList && <Icon name="schedule" />}
-        {isInMessageList && <Icon name="check" />}
-        <Button
-          className={buildClassName(
-            'paidStarsBadge',
-            shouldRenderPaidBadge && 'visible',
-            prevShouldRenderPaidBadge && !shouldRenderPaidBadge && 'hiding',
-            !prevShouldRenderPaidBadge && !shouldRenderPaidBadge && 'hidden',
-          )}
-          nonInteractive
-          size="tiny"
-          color="stars"
-          pill
-          fluid
-        >
-          <div className="paidStarsBadgeText">
-            <Icon name="star" className={buildClassName('star-amount-icon', className)} />
-            <AnimatedCounter
-              ref={counterRef}
-              text={lang.number(starsForAllMessages)}
+            <EmojiTooltip
+              key={`emoji-tooltip-${editableInputId}`}
+              isOpen={isEmojiTooltipOpen}
+              emojis={filteredEmojis}
+              customEmojis={filteredCustomEmojis}
+              addRecentEmoji={addRecentEmoji}
+              addRecentCustomEmoji={addRecentCustomEmoji}
+              onEmojiSelect={insertEmoji}
+              onCustomEmojiSelect={insertEmoji}
+              onClose={closeEmojiTooltip}
             />
           </div>
-        </Button>
-      </Button>
-      {effectEmoji && (
-        <span className="effect-icon" onClick={handleRemoveEffect}>
-          {renderText(effectEmoji)}
-        </span>
-      )}
-      {effect && canPlayEffect && (
-        <MessageEffect
-          shouldPlay={shouldPlayEffect}
-          effect={effect}
-          onStop={handleStopEffect}
+        </div>
+        {canSendOneTimeMedia && activeVoiceRecording && (
+          <Button
+            className={buildClassName('view-once', isViewOnceEnabled && 'active')}
+            round
+            color="secondary"
+            ariaLabel={oldLang('Chat.PlayOnceVoiceMessageTooltip')}
+            onClick={toogleViewOnceEnabled}
+          >
+            <Icon name="view-once" />
+            <Icon name="one-filled" />
+          </Button>
+        )}
+        {activeVoiceRecording && (
+          <Button
+            round
+            color="danger"
+            className="cancel"
+            onClick={stopRecordingVoice}
+            ariaLabel="Cancel voice recording"
+          >
+            <Icon name="delete" />
+          </Button>
+        )}
+        {isInStoryViewer && !activeVoiceRecording && (
+          <Button
+            round
+            className="story-reaction-button"
+            color="secondary"
+            onClick={handleLikeStory}
+            onContextMenu={handleStoryPickerContextMenu}
+            onMouseDown={handleBeforeStoryPickerContextMenu}
+            ariaLabel={oldLang('AccDescrLike')}
+            ref={storyReactionRef}
+          >
+            {sentStoryReaction && (
+              <ReactionAnimatedEmoji
+                key={getReactionKey(sentStoryReaction)}
+                containerId={getStoryKey(chatId, storyId!)}
+                reaction={sentStoryReaction}
+                withEffectOnly={isSentStoryReactionHeart}
+              />
+            )}
+            {(!sentStoryReaction || isSentStoryReactionHeart) && (
+              <Icon name="heart" className={buildClassName(isSentStoryReactionHeart && 'story-reaction-heart')} />
+            )}
+          </Button>
+        )}
+        {isShowTranslation ?
+          (
+            <Button
+              onClick={() => handleSentTextToTranslate()}
+              style="border-radius: 0"
+            >
+              <img src={SentAI} alt="Tongram AI" className="tongram-ai-icon" />
+            </Button>
+          ) : (
+            <Button
+              ref={mainButtonRef}
+              round
+              color="secondary"
+              className={buildClassName(
+                mainButtonState,
+                'main-button',
+                !isReady && 'not-ready',
+                activeVoiceRecording && 'recording',
+              )}
+              disabled={areVoiceMessagesNotAllowed}
+              allowDisabledClick
+              noFastClick
+              ariaLabel={oldLang(sendButtonAriaLabel)}
+              onClick={mainButtonHandler}
+              onContextMenu={
+                mainButtonState === MainButtonState.Send && canShowCustomSendMenu ? handleContextMenu : undefined
+              }
+              style="border-radius: 0"
+            >
+              <Icon name="send" />
+              <Icon name="microphone-alt" />
+              {onForward && <Icon name="forward" />}
+              {isInMessageList && <Icon name="schedule" />}
+              {isInMessageList && <Icon name="check" />}
+              <Button
+                className={buildClassName(
+                  'paidStarsBadge',
+                  shouldRenderPaidBadge && 'visible',
+                  prevShouldRenderPaidBadge && !shouldRenderPaidBadge && 'hiding',
+                  !prevShouldRenderPaidBadge && !shouldRenderPaidBadge && 'hidden',
+                )}
+                nonInteractive
+                size="tiny"
+                color="stars"
+                pill
+                fluid
+              >
+                <div className="paidStarsBadgeText">
+                  <Icon name="star" className={buildClassName('star-amount-icon', className)} />
+                  <AnimatedCounter
+                    ref={counterRef}
+                    text={lang.number(starsForAllMessages)}
+                  />
+                </div>
+              </Button>
+            </Button>
+          )}
+
+        {effectEmoji && (
+          <span className="effect-icon" onClick={handleRemoveEffect}>
+            {renderText(effectEmoji)}
+          </span>
+        )}
+        {effect && canPlayEffect && (
+          <MessageEffect
+            shouldPlay={shouldPlayEffect}
+            effect={effect}
+            onStop={handleStopEffect}
+          />
+        )}
+        {canShowCustomSendMenu && (
+          <CustomSendMenu
+            isOpen={isCustomSendMenuOpen}
+            canSchedule={canSchedule && isInMessageList && !isViewOnceEnabled}
+            canScheduleUntilOnline={canScheduleUntilOnline && !isViewOnceEnabled}
+            onSendSilent={!isChatWithSelf ? handleSendSilent : undefined}
+            onSendSchedule={!isInScheduledList ? handleSendScheduled : undefined}
+            onSendWhenOnline={handleSendWhenOnline}
+            onRemoveEffect={handleRemoveEffect}
+            onClose={handleContextMenuClose}
+            onCloseAnimationEnd={handleContextMenuHide}
+            isSavedMessages={isChatWithSelf}
+            chatId={chatId}
+            withEffects={areEffectsSupported}
+            hasCurrentEffect={Boolean(effect)}
+            effectReactions={effectReactions}
+            allAvailableReactions={availableReactions}
+            onToggleReaction={handleToggleEffectReaction}
+            isCurrentUserPremium={isCurrentUserPremium}
+            isInSavedMessages={isChatWithSelf}
+            isInStoryViewer={isInStoryViewer}
+            canPlayAnimatedEmojis={canPlayAnimatedEmojis}
+          />
+        )}
+        {calendar}
+        <PaymentMessageConfirmDialog
+          isOpen={isPaymentMessageConfirmDialogOpen}
+          onClose={closeConfirmModalPayForMessage}
+          userName={chat ? getPeerTitle(lang, chat) : undefined}
+          messagePriceInStars={paidMessagesStars || 0}
+          messagesCount={messagesCount}
+          shouldAutoApprove={shouldPaidMessageAutoApprove}
+          setAutoApprove={setShouldPaidMessageAutoApprove}
+          confirmHandler={paymentMessageConfirmDialogHandler}
         />
-      )}
-      {canShowCustomSendMenu && (
-        <CustomSendMenu
-          isOpen={isCustomSendMenuOpen}
-          canSchedule={canSchedule && isInMessageList && !isViewOnceEnabled}
-          canScheduleUntilOnline={canScheduleUntilOnline && !isViewOnceEnabled}
-          onSendSilent={!isChatWithSelf ? handleSendSilent : undefined}
-          onSendSchedule={!isInScheduledList ? handleSendScheduled : undefined}
-          onSendWhenOnline={handleSendWhenOnline}
-          onRemoveEffect={handleRemoveEffect}
-          onClose={handleContextMenuClose}
-          onCloseAnimationEnd={handleContextMenuHide}
-          isSavedMessages={isChatWithSelf}
-          chatId={chatId}
-          withEffects={areEffectsSupported}
-          hasCurrentEffect={Boolean(effect)}
-          effectReactions={effectReactions}
-          allAvailableReactions={availableReactions}
-          onToggleReaction={handleToggleEffectReaction}
-          isCurrentUserPremium={isCurrentUserPremium}
-          isInSavedMessages={isChatWithSelf}
-          isInStoryViewer={isInStoryViewer}
-          canPlayAnimatedEmojis={canPlayAnimatedEmojis}
-        />
-      )}
-      {calendar}
-      <PaymentMessageConfirmDialog
-        isOpen={isPaymentMessageConfirmDialogOpen}
-        onClose={closeConfirmModalPayForMessage}
-        userName={chat ? getPeerTitle(lang, chat) : undefined}
-        messagePriceInStars={paidMessagesStars || 0}
-        messagesCount={messagesCount}
-        shouldAutoApprove={shouldPaidMessageAutoApprove}
-        setAutoApprove={setShouldPaidMessageAutoApprove}
-        confirmHandler={paymentMessageConfirmDialogHandler}
-      />
+      </div>
     </div>
   );
 };

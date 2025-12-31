@@ -152,8 +152,8 @@ export interface LangPair {
   'LoginPhonePlaceholder': undefined;
   'LoginNext': undefined;
   'LoginQRLogin': undefined;
-  'LoginQRTitle': undefined;
-  'LoginQRHelp1': undefined;
+  'LoginQRTitleTongram': undefined;
+  'LoginQRHelp1Tongram': undefined;
   'LoginQRHelp2': undefined;
   'LoginQRHelp3': undefined;
   'LoginQRCancel': undefined;
@@ -367,7 +367,7 @@ export interface LangPair {
   'AuthSessionsViewLocationInfo': undefined;
   'AuthSessionsLogOutApplications': undefined;
   'AuthKeepSignedIn': undefined;
-  'AuthTitle': undefined;
+  'AuthTitleTongram': undefined;
   'ClearOtherWebSessionsHelp': undefined;
   'AreYouSureWebSessions': undefined;
   'AutoDownloadMaxFileSize': undefined;
