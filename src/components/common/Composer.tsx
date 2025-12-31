@@ -197,7 +197,7 @@ import ReactionAnimatedEmoji from './reactions/ReactionAnimatedEmoji';
 
 import './Composer.scss';
 
-import SentAI from '../../assets/sentAI.svg';
+import SentAI from '../../assets/sent-ai.svg';
 
 type ComposerType = 'messageList' | 'story';
 

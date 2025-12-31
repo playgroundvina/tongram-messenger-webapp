@@ -16,10 +16,10 @@ import ChooseLanguageModal from './ChooseLanguageModal';
 
 import './TranslationBox.scss';
 
-import TongramAiIcon from '../../../../assets/tongramAi2.svg';
+import TongramAiIcon from '../../../../assets/tongram-ai2.svg';
 import Translation from '../../../../assets/translation.svg';
-import TranslationBG from '../../../../assets/translationBG.svg';
-import WritingAssistant from '../../../../assets/writingAssistant.svg';
+import TranslationBG from '../../../../assets/translation-bg.svg';
+import WritingAssistant from '../../../../assets/writing-assistant.svg';
 
 export type TranslateBoxProps = {
   translateValue?: string;

@@ -25,7 +25,7 @@ import ProfileInfo from '../../common/profile/ProfileInfo';
 import ConfirmDialog from '../../ui/ConfirmDialog';
 import ListItem from '../../ui/ListItem';
 
-import AITranslation from '../../../assets/AITranslation.svg';
+import AITranslation from '../../../assets/ai-translation.svg';
 
 type OwnProps = {
   isActive?: boolean;
