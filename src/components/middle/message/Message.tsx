@@ -1049,7 +1049,6 @@ const Message = ({
 
   async function handleTranslation(e: ApiMessage) {
     const textMessageTranslate = e.content.text?.text;
-
     if (showTranslateText) {
       setShowTranslateText(false);
       setTranslateText('');
@@ -1057,7 +1056,7 @@ const Message = ({
     }
 
     if (textMessageTranslate) {
-      const translate = await translateMessageText(textMessageTranslate);
+      const translate = await translateMessageText(e);
       if (translate) {
         setTranslateText(translate);
         setShowTranslateText(true);

@@ -1,5 +1,20 @@
-export async function translateMessageText(text: string,
+import type { ApiMessage } from '../../../../api/types';
+
+import { getCachedTranslation, saveCachedTranslation } from '../../../../util/db/translationCache';
+
+export async function translateMessageText(message: ApiMessage,
   targetLanguage: string = 'eng') {
+  // Check cache first
+  try {
+    const cachedTranslation = await getCachedTranslation(message, targetLanguage);
+    if (cachedTranslation) {
+      return cachedTranslation;
+    }
+  } catch (err) {
+    // Continue to API call if cache fails
+  }
+  const text = message.content.text?.text;
+
   const body = JSON.stringify({
     text,
     target_language: targetLanguage,
@@ -21,11 +36,21 @@ export async function translateMessageText(text: string,
     );
 
     if (!response.ok) {
-      return undefined;
+      return 'Translation unavailable, try again.';
     }
 
     const data = await response.json();
     const translation = data?.result?.choices[0].message?.content;
+
+    // Cache the translation if successful
+    if (translation) {
+      try {
+        await saveCachedTranslation(message, targetLanguage, translation);
+      } catch (err) {
+        // Don't fail the whole process if caching fails
+      }
+    }
+
     return translation || undefined;
   } catch (err) {
     return undefined;
