@@ -1216,8 +1216,11 @@ export interface LangPair {
   'MenuContacts': undefined;
   'MenuSettings': undefined;
   'MenuNightMode': undefined;
+  'MenuTranslation': undefined;
   'AriaMenuEnableNightMode': undefined;
   'AriaMenuDisableNightMode': undefined;
+  'AriaMenuEnableTranslate': undefined;
+  'AriaMenuDisableTranslate': undefined;
   'MenuAnimationsSwitch': undefined;
   'MenuTelegramFeatures': undefined;
   'TelegramFeaturesUsername': undefined;

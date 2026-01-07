@@ -1,13 +1,14 @@
 import type { FC, TeactNode } from '../../../lib/teact/teact';
 import type React from '../../../lib/teact/teact';
 import { memo, useMemo } from '../../../lib/teact/teact';
-import { getActions } from '../../../global';
+import { getActions, withGlobal } from '../../../global';
 
 import type {
   ApiAvailableReaction, ApiMessage, ApiMessageOutgoingStatus, ApiThreadInfo,
 } from '../../../api/types';
 import { LANGUAGE_SCRIPT_MAP, SCRIPT_REGEX } from '../../../global/types/languageCode';
 
+import { selectTranslate } from '../../../global/selectors';
 import buildClassName from '../../../util/buildClassName';
 import { formatDateTimeToString, formatPastTimeShort, formatTime } from '../../../util/dates/dateFormat';
 import { formatStarsAsIcon } from '../../../util/localization/format';
@@ -23,6 +24,10 @@ import Icon from '../../common/icons/Icon';
 import MessageOutgoingStatus from '../../common/MessageOutgoingStatus';
 
 import './MessageMeta.scss';
+
+type StateProps = {
+  translate: string;
+};
 
 type OwnProps = {
   message: ApiMessage;
@@ -46,7 +51,7 @@ type OwnProps = {
   paidMessageStars?: number;
 };
 
-const MessageMeta: FC<OwnProps> = ({
+const MessageMeta: FC<OwnProps & StateProps> = ({
   message,
   outgoingStatus,
   signature,
@@ -65,6 +70,7 @@ const MessageMeta: FC<OwnProps> = ({
   onEffectClick,
   onOpenThread,
   paidMessageStars,
+  translate,
 }) => {
   const { showNotification } = getActions();
 
@@ -237,32 +243,34 @@ const MessageMeta: FC<OwnProps> = ({
           {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
           {date}
         </span>
-      ) : (
-        <div className="message-btn-translate">
-          <div className="message-time" title={dateTitle} onMouseEnter={markActivated} onClick={onClick}>
-            {message.forwardInfo?.isImported && (
-              <>
-                <span className="message-imported" onClick={handleImportedClick}>
-                  {formatDateTimeToString(message.forwardInfo.date * 1000, lang.code, true)}
-                </span>
-                <span className="message-imported" onClick={handleImportedClick}>{lang('MessageMetaImported')}</span>
-              </>
-            )}
-            {message.isEdited && `${lang('MessageMetaEdited')} `}
-            {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
-            <span>
-              {date}
-            </span>
+      ) :
+        (
+          <div className="message-btn-translate">
+            <div className="message-time" title={dateTitle} onMouseEnter={markActivated} onClick={onClick}>
+              {message.forwardInfo?.isImported && (
+                <>
+                  <span className="message-imported" onClick={handleImportedClick}>
+                    {formatDateTimeToString(message.forwardInfo.date * 1000, lang.code, true)}
+                  </span>
+                  <span className="message-imported" onClick={handleImportedClick}>{lang('MessageMetaImported')}</span>
+                </>
+              )}
+              {message.isEdited && `${lang('MessageMetaEdited')} `}
+              {message.isVideoProcessingPending && `${lang('MessageMetaApproximate')} `}
+              <span>
+                {date}
+              </span>
+            </div>
+            {
+              translate === 'true'
+              && !isMessageInLanguage(message.content.text?.text || '', lang.languageInfo.langCode) && (
+                <button className="btn-translate" onClick={() => onTranslate(message)}>
+                  {showTranslateText ? 'Hide Translation' : 'Translate'}
+                </button>
+              )
+            }
           </div>
-          {
-            !isMessageInLanguage(message.content.text?.text || '', lang.languageInfo.langCode) && (
-              <button className="btn-translate" onClick={() => onTranslate(message)}>
-                {showTranslateText ? 'Hide Translation' : 'Translate'}
-              </button>
-            )
-          }
-        </div>
-      )}
+        )}
       {outgoingStatus && (
         <MessageOutgoingStatus status={outgoingStatus} />
       )}
@@ -271,4 +279,10 @@ const MessageMeta: FC<OwnProps> = ({
   );
 };
 
-export default memo(MessageMeta);
+export default memo(
+  withGlobal<OwnProps>((global): Complete<StateProps> => {
+    return {
+      translate: selectTranslate(global),
+    };
+  })(MessageMeta),
+);

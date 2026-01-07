@@ -73,6 +73,7 @@ export const INITIAL_PERFORMANCE_STATE_MIN: PerformanceType = {
 
 export const INITIAL_SHARED_STATE: SharedState = {
   settings: {
+    translate: 'false',
     theme: 'dark',
     shouldUseSystemTheme: true,
     messageTextSize: IS_IOS

@@ -19,6 +19,9 @@
       --offset-y: calc(100% + 1rem);
 
       z-index: var(--z-header-menu);
+      background-color: var(--color-background-second);
+      min-width: 15.5rem;
+      border: 0.5px solid #83838380;
     }
   }
 }

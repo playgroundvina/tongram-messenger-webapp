@@ -25,6 +25,7 @@ import {
 import {
   selectTabState,
   selectTheme,
+  selectTranslate,
   selectUser,
 } from '../../../global/selectors';
 import { selectPremiumLimit } from '../../../global/selectors/limits';
@@ -64,6 +65,7 @@ type StateProps = {
   animationLevel: AnimationLevel;
   currentUser?: ApiUser;
   theme: ThemeKey;
+  translate: string;
   canInstall?: boolean;
   attachBots: GlobalState['attachMenu']['bots'];
   accountsTotalLimit: number;
@@ -74,6 +76,7 @@ const LeftSideMenuItems = ({
   archiveSettings,
   animationLevel,
   theme,
+  translate,
   canInstall,
   attachBots,
   currentUser,
@@ -139,6 +142,15 @@ const LeftSideMenuItems = ({
       const newTheme = theme === 'light' ? 'dark' : 'light';
 
       setSharedSettingOption({ theme: newTheme });
+      setSharedSettingOption({ shouldUseSystemTheme: false });
+    },
+  );
+
+  const handleTranslationToggle = useLastCallback(
+    (e: React.SyntheticEvent<HTMLElement>) => {
+      e.stopPropagation();
+      const translateState = translate === 'false' ? 'true' : 'false';
+      setSharedSettingOption({ translate: translateState });
       setSharedSettingOption({ shouldUseSystemTheme: false });
     },
   );
@@ -288,6 +300,19 @@ const LeftSideMenuItems = ({
           noAnimation
         />
       </MenuItem>
+      <MenuItem icon="darkmode" onClick={handleTranslationToggle}>
+        <span className="menu-item-name">{lang('MenuTranslation')}</span>
+        <Switcher
+          id="darkmode"
+          label={lang(
+            translate === 'false'
+              ? 'AriaMenuDisableTranslate'
+              : 'AriaMenuEnableTranslate',
+          )}
+          checked={translate === 'false' ? false : true}
+          noAnimation
+        />
+      </MenuItem>
       <MenuItem icon="animations" onClick={handleAnimationLevelChange}>
         <span className="menu-item-name capitalize">
           {lang('MenuAnimationsSwitch')}
@@ -335,6 +360,7 @@ export default memo(
       currentUserId,
       currentUser: selectUser(global, currentUserId!),
       theme: selectTheme(global),
+      translate: selectTranslate(global),
       animationLevel,
       canInstall: Boolean(tabState.canInstall),
       archiveSettings,
