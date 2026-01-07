@@ -101,6 +101,7 @@ import {
   selectTabState,
   selectTheme,
   selectTopicFromMessage,
+  selectTranslate,
   selectUser,
   selectUserFullInfo,
   selectWebPage,
@@ -314,6 +315,7 @@ type StateProps =
     isAppConfigLoaded?: boolean;
     insertingPeerIdMention?: string;
     pollMaxAnswers?: number;
+    translate: string;
   };
 
 enum MainButtonState {
@@ -440,6 +442,7 @@ const Composer: FC<OwnProps & StateProps> = ({
   pollMaxAnswers,
   isShowTranslation,
   translatedText,
+  translate,
   onDropHide,
   onFocus,
   onBlur,
@@ -2331,7 +2334,8 @@ const Composer: FC<OwnProps & StateProps> = ({
                 paidMessagesStars={paidMessagesStars}
               />
             )}
-            <TranslationButton onShow={() => onOpenAI?.()} />
+            {translate === 'true' &&
+              <TranslationButton onShow={() => onOpenAI?.()} />}
 
             {isInMessageList && Boolean(botKeyboardMessageId) && (
               <BotKeyboardMenu
@@ -2717,6 +2721,7 @@ export default memo(withGlobal<OwnProps>(
       isAppConfigLoaded,
       insertingPeerIdMention,
       pollMaxAnswers: appConfig.pollMaxAnswers,
+      translate: selectTranslate(global),
     };
   },
 )(Composer));

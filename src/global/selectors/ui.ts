@@ -76,6 +76,10 @@ export function selectTheme<T extends GlobalState>(global: T) {
   return selectSharedSettings(global).theme;
 }
 
+export function selectTranslate<T extends GlobalState>(global: T) {
+  return selectSharedSettings(global).translate;
+}
+
 export function selectThemeValues<T extends GlobalState>(global: T, themeKey: ThemeKey) {
   return global.settings.themes[themeKey];
 }

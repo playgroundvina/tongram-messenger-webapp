@@ -304,19 +304,21 @@ const PhoneCall: FC<StateProps> = ({
         <span className={styles.status}>{callStatus || formatMediaDuration(timeElapsed || 0)}</span>
       </div>
       <div className={styles.buttons}>
-        <PhoneCallButton
-          onClick={handleToggleAudio}
-          icon="microphone"
-          isDisabled={!isActive}
-          isActive={hasOwnAudio}
-          label={lang(hasOwnAudio ? 'lng_call_mute_audio' : 'lng_call_unmute_audio')}
-        />
+        {IS_SCREENSHARE_SUPPORTED && (
+          <PhoneCallButton
+            onClick={handleTogglePresentation}
+            icon="share-screen"
+            isDisabled={!isActive}
+            isActive={hasOwnPresentation}
+            label={lang('ScreenCast')}
+          />
+        )}
         <PhoneCallButton
           onClick={handleToggleVideo}
           icon="video"
           isDisabled={!isActive}
           isActive={hasOwnVideo}
-          label={lang(hasOwnVideo ? 'lng_call_stop_video' : 'lng_call_start_video')}
+          label={lang(hasOwnVideo ? 'Stop Video' : 'Start Video')}
         />
         {hasOwnVideo && (IS_ANDROID || IS_IOS) && (
           <PhoneCallButton
@@ -332,15 +334,13 @@ const PhoneCall: FC<StateProps> = ({
             label={lang('VoipFlip')}
           />
         )}
-        {IS_SCREENSHARE_SUPPORTED && (
-          <PhoneCallButton
-            onClick={handleTogglePresentation}
-            icon="share-screen"
-            isDisabled={!isActive}
-            isActive={hasOwnPresentation}
-            label={lang('lng_call_screencast')}
-          />
-        )}
+        <PhoneCallButton
+          onClick={handleToggleAudio}
+          icon="microphone"
+          isDisabled={!isActive}
+          isActive={hasOwnAudio}
+          label={lang(hasOwnAudio ? 'Mute' : 'UnMute')}
+        />
         {isIncomingRequested && (
           <PhoneCallButton
             onClick={requestMasterAndAcceptCall}

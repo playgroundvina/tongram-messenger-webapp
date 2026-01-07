@@ -12,6 +12,8 @@ import Button from '../ui/Button';
 import Modal from '../ui/Modal';
 import RadioGroup from '../ui/RadioGroup';
 
+import './MuteChatModal.scss';
+
 export type OwnProps = {
   isOpen: boolean;
   chatId: string;

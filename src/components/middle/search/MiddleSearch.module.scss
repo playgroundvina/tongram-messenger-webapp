@@ -48,6 +48,7 @@
     opacity: 1;
   }
 
+
   :global(body.is-tauri.is-macos) & {
     padding-left: var(--window-controls-width);
   }
@@ -75,14 +76,32 @@
   transition-timing-function: ease-in-out;
   transition-duration: 200ms;
   transition-property: background-color, box-shadow, border-radius;
+  background-color: var(--color-primary);
+  color: var(--color-text-black);
+
+  input{
+    color: var(--color-text-black);
+
+    &::placeholder {
+      color: var(--color-text-black);
+    }
+  }
+
+  i{
+    color: var(--color-text-black);
+  }
 
   .mobile & {
     margin: 0;
   }
 }
 
+
+
 .focused .input {
   box-shadow: 0 0 0.625rem 0 var(--color-default-shadow);
+  background-color: var(--color-primary);
+  color: var(--color-text-black);
 }
 
 .withDropdown {
@@ -150,13 +169,14 @@
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
+  background-color: var(--color-primary);
 
   @include mixins.adapt-padding-to-scrollbar(0.5rem);
 }
 
 .placeholder {
   margin: 0.5rem;
-  color: var(--color-text-secondary);
+  // color: var(--color-text-secondary);
   text-align: center;
 }
 

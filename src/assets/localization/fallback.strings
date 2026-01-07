@@ -1423,8 +1423,11 @@
 "MenuContacts" = "Contacts";
 "MenuSettings" = "Settings";
 "MenuNightMode" = "Night Mode";
+"MenuTranslation" = "Enable Translation";
 "AriaMenuEnableNightMode" = "Enable night mode";
 "AriaMenuDisableNightMode" = "Disable night mode";
+"AriaMenuEnableTranslate" = "Enable translate";
+"AriaMenuDisableTranslate" = "Disable translate";
 "MenuAnimationsSwitch" = "Animations";
 "MenuTelegramFeatures" = "Tongram Features";
 "TelegramFeaturesUsername" = "TelegramTips";

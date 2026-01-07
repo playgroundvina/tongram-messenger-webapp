@@ -9,6 +9,7 @@ export interface SharedState {
 export interface SharedSettings {
   shouldUseSystemTheme: boolean;
   theme: ThemeKey;
+  translate: string;
   language: string;
   languages?: ApiLanguage[];
   performance: PerformanceType;

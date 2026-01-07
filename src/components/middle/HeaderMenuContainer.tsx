@@ -809,7 +809,7 @@ const HeaderMenuContainer: FC<OwnProps & StateProps> = ({
           )}
           {canLeave && (
             <>
-              <MenuSeparator />
+              {/* <MenuSeparator /> */}
               <MenuItem
                 destructive
                 icon="delete"
