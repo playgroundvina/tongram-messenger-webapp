@@ -1,6 +1,6 @@
 .root {
 
-  // --peer-color-wrapper-bar-color: var(--bar-gradient, var(--accent-color));
+  --peer-color-wrapper-bar-color: var(--bar-gradient, var(--accent-color));
 
   position: relative;
 
@@ -13,6 +13,8 @@
   color: var(--accent-color);
 
   // background-color: var(--accent-background-color);
+  background-color: #0000000D;
+;
 
   &::before {
     content: "";

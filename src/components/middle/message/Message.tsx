@@ -982,9 +982,9 @@ const Message = ({
       reactionsMaxWidth = width + EXTRA_SPACE_FOR_REACTIONS;
     }
 
-    if (!isOwn) {
-      style = `padding-right: 20px; ${style}`;
-    }
+    // if (!isOwn) {
+    //   style = `padding-right: 20px; ${style}`;
+    // }
 
     return {
       contentWidth, style, reactionsMaxWidth,
