@@ -34,7 +34,8 @@
     color: var(--color-placeholders);
     white-space: nowrap;
 
-    background-color: var(--color-background);
+    // background-color: var(--color-background);
+    background-color: var(--color-background-right-info);
 
     transition: transform 0.15s ease-out, color 0.15s ease-out;
   }
@@ -131,7 +132,8 @@
   overflow-wrap: anywhere;
 
   -webkit-appearance: none;
-  background-color: var(--color-background);
+  // background-color: var(--color-background);
+  background-color: var(--color-background-right-info);
   outline: none;
 
   transition: border-color 0.15s ease;

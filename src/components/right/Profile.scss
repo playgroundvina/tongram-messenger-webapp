@@ -25,7 +25,7 @@
     @include mixins.side-panel-section;
     @include mixins.with-vt-type('rightColumn');
     margin-left: 10px;
-    background-color: #0E1425;
+    background-color: var(--color-background-profile);
     border-radius: 18.45px;
 
     .narrow {
@@ -94,7 +94,7 @@
 
   .TabList {
     z-index: 1;
-    background: var(--color-background);
+    background: var(--color-background-right-info);
   }
 
   .info .Transition {

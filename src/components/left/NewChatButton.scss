@@ -19,6 +19,7 @@
 
     &.revealed {
       opacity: 1;
+      background-color: var(--color-primary-opacity) !important;
     }
   }
 

@@ -18,7 +18,7 @@
     padding: 1rem 0.5rem;
 
     @include mixins.adapt-padding-to-scrollbar(0.5rem);
-    @include mixins.side-panel-section;
+    // @include mixins.side-panel-section;
 
     &.wide {
       padding: 1.5rem;

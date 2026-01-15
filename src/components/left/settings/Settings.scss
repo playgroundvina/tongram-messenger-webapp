@@ -23,7 +23,7 @@
   }
 
   .ChatExtra{
-    background-color: #0E1425;
+    background-color: var(--color-background-profile);
     border-radius: 18.45px;
   }
 }
@@ -47,7 +47,7 @@
 }
 
 .settings-main-menu--separated{
-  background-color: #0E1425;
+  background-color: var(--color-background-profile);
   border-radius: 18.45px;
 }
 

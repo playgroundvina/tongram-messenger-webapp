@@ -39,7 +39,7 @@
     .composer-wrapper {
       transform: scaleX(1) translateX(0);
       transition: transform var(--select-transition), border-bottom-right-radius var(--select-transition);
-      background-color: #1A1F29;
+      background-color: var(--color-background-composer);
 
       &::before {
         transform: scaleX(-1) translateX(0);
@@ -67,7 +67,7 @@
     > .Button {
       transform: scale(1);
       opacity: 1;
-      background-color: #1A1F29;
+      background-color: var(--color-background-composer);
 
       /* stylelint-disable plugin/no-low-performance-animation-properties */
       transition:
@@ -273,7 +273,8 @@
 .MessageSelectToolbar,
 .composer-button,
 .messaging-disabled {
-  background-color: #0E1424;
+  background-color: var(--color-background-profile);
+  border-top: 1px solid #7D99D580;
   position: relative;
   display: flex;
   justify-content: center;

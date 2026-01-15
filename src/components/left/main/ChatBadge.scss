@@ -67,7 +67,7 @@
   &.unread:not(.muted),
   &.unopened:not(.muted) {
     color: var(--color-text-black);
-    background: var(--color-primary);
+    background: var(--color-unread);
   }
 
   &.unopened {
