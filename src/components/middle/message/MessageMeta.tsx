@@ -262,7 +262,7 @@ const MessageMeta: FC<OwnProps & StateProps> = ({
               </span>
             </div>
             {
-              translate === 'true'
+              translate === 'true' && message.content.text?.entities?.length === 0
               && !isMessageInLanguage(message.content.text?.text || '', lang.languageInfo.langCode) && (
                 <button className="btn-translate" onClick={() => onTranslate(message)}>
                   {showTranslateText ? 'Hide Translation' : 'Translate'}

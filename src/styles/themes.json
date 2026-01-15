@@ -10,6 +10,7 @@
   "--color-background": ["#E0E8F4","#020616"],
   "--color-background-message": ["#ffffff","#1A1F29"],
   "--color-background-right-info": ["#ffffff","#020616"],
+  "--pattern-color-background": ["transparent","#020616"],
   "--color-background-profile": ["#ffffff","#0E1424"],
   "--color-background-composer": ["#ffffff","#1A1F29"],
   "--color-background-select": ["#ffffff","#1A1F29"],

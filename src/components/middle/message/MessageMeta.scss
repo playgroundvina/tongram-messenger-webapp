@@ -134,11 +134,18 @@
 
   .media.no-footer &,
   .Message .invoice:not(.has-reactions).has-photo & {
-    background: rgba(0, 0, 0, 0.2);
+    // background: rgba(0, 0, 0, 0.2);
+    background: var(--pattern-color-background);
+    span{
+      color: rgba(var(--color-text-meta-rgb), 0.75);
+    }
   }
 
   .Message .custom-shape & {
-    background: var(--pattern-color);
+    background: var(--pattern-color-background);
+    span{
+      color: rgba(var(--color-text-meta-rgb), 0.75);
+    }
   }
 
   .voice &[dir="rtl"] {
