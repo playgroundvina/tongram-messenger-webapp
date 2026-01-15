@@ -1,6 +1,6 @@
 .ComposerEmbeddedMessage {
   --accent-color: var(--color-primary);
-  background-color: #0E1424;
+  background-color: var(--color-background-profile);
 
   height: 3.125rem;
   /* stylelint-disable-next-line plugin/no-low-performance-animation-properties */

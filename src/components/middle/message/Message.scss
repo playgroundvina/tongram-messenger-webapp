@@ -2,9 +2,9 @@
 
 // General styles
 .Message {
-  --color-background: #1A1F29;
+  // --color-background: #1A1F29;
 
-  --background-color: var(--color-background);
+  --background-color: var(--color-background-message);
   --hover-color: var(--color-reply-hover);
   --color-reaction: var(--color-message-reaction);
   --hover-color-reaction: var(--color-message-reaction-hover);

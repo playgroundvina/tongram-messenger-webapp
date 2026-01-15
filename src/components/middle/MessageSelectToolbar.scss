@@ -12,7 +12,7 @@
 
   opacity: 1;
 
-  background-color: #1A1F29;
+  background-color: var(--color-background-select);
 
   &::before {
     z-index: -1;

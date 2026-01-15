@@ -76,19 +76,19 @@
   transition-timing-function: ease-in-out;
   transition-duration: 200ms;
   transition-property: background-color, box-shadow, border-radius;
-  background-color: var(--color-primary);
-  color: var(--color-text-black);
+  background-color: var(--color-background-search);
+  color: var(--color-text-search);
 
   input{
-    color: var(--color-text-black);
+    color: var(--color-text-search);
 
     &::placeholder {
-      color: var(--color-text-black);
+      color: var(--color-text-search);
     }
   }
 
   i{
-    color: var(--color-text-black);
+    color: var(--color-icon-search);
   }
 
   .mobile & {
@@ -100,8 +100,8 @@
 
 .focused .input {
   box-shadow: 0 0 0.625rem 0 var(--color-default-shadow);
-  background-color: var(--color-primary);
-  color: var(--color-text-black);
+  background-color: var(--color-background-search);
+  color: var(--color-text-search);
 }
 
 .withDropdown {
@@ -169,7 +169,7 @@
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
-  background-color: var(--color-primary);
+  background-color: var(--color-background-search);
 
   @include mixins.adapt-padding-to-scrollbar(0.5rem);
 }

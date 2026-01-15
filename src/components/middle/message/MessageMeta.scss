@@ -157,7 +157,7 @@
   }
 
   .Message.own .has-solid-background & {
-    color: var(--color-text-black);
+    color: #000000;
   }
 
   .MessageOutgoingStatus {
@@ -167,7 +167,7 @@
     font-size: 1.1875rem;
 
     .Message.own & {
-      color: var(--color-text-black);
+      color: #000000;
     }
   }
 
