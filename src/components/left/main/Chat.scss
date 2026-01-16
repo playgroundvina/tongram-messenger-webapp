@@ -429,11 +429,11 @@
 
       .ListItem-button {
         --background-color: var(--color-chat-active) !important;
-        --color-text: var(--color-text-black);
-        --color-text-meta-colored: var(--color-text-black);
+        --color-text: #000000;
+        --color-text-meta-colored: #000000;
         --color-text-meta: var(--color-text-black);
         --color-text-secondary: var(--color-text-secondary);
-        --color-error: var(--color-text-black);
+        --color-error: #000000;
         --color-list-icon: var(--color-text-black);
         --color-chat-username: var(--color-text-black);
       }

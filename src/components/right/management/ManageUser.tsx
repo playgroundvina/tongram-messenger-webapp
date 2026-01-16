@@ -217,20 +217,20 @@ const ManageUser: FC<OwnProps & StateProps> = ({
               onChange={handleLastNameChange}
               value={lastName}
             />
-          </div>
-          <div className="ListItem narrow">
-            <Checkbox
-              checked={isNotificationsEnabled}
-              label={lang('Notifications')}
-              subLabel={lang(isNotificationsEnabled
-                ? 'UserInfo.NotificationsEnabled'
-                : 'UserInfo.NotificationsDisabled')}
-              onChange={handleNotificationChange}
-            />
+            <div className="ListItem narrow">
+              <Checkbox
+                checked={isNotificationsEnabled}
+                label={lang('Notifications')}
+                subLabel={lang(isNotificationsEnabled
+                  ? 'UserInfo.NotificationsEnabled'
+                  : 'UserInfo.NotificationsDisabled')}
+                onChange={handleNotificationChange}
+              />
+            </div>
           </div>
         </div>
         {canSetPersonalPhoto && (
-          <div className="section">
+          <div className="section section-with-help">
             <ListItem icon="camera-add" ripple onClick={handleSuggestPhoto}>
               <span className="list-item-ellipsis">{lang('UserInfo.SuggestPhoto', user.firstName)}</span>
             </ListItem>
@@ -257,7 +257,7 @@ const ManageUser: FC<OwnProps & StateProps> = ({
             <p className="section-help" dir="auto">{lang('UserInfo.CustomPhotoInfo', user.firstName)}</p>
           </div>
         )}
-        <div className="section">
+        <div className="section section-with-help section-with-help-delete">
           <ListItem icon="delete" ripple destructive onClick={openDeleteDialog}>
             {lang('DeleteContact')}
           </ListItem>

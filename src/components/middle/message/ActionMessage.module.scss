@@ -41,7 +41,7 @@
   padding: 0.1875rem 0.5rem;
   border-radius: var(--border-radius-messages);
 
-  color: white;
+  color: var(--color-text);
 
   background-color: var(--action-message-bg);
 }
@@ -109,7 +109,7 @@
   }
 
   .textContent {
-    background-color: transparent !important;
+    background-color: var(--color-background-action-message) !important;
   }
 }
 
