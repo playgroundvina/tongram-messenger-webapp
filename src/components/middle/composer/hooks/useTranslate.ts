@@ -29,6 +29,7 @@ export async function translateMessageText(message: ApiMessage,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-API-Key': 'ccf38ec98f614ed8a326843fc715b8d1',
         },
         body,
         redirect: 'follow',

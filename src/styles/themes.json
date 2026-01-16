@@ -1,5 +1,6 @@
 {
   "--color-primary": ["#000000", "#AFC8FF"],
+  "--color-secondary": ["#7D99D5", "#000000"],
   "--color-background-search": ["#ffffff", "#AFC8FF"],
   "--color-text-search": ["#000000", "#ffffff"],
   "--color-icon-search": ["#000000", "#ffffff"],
@@ -10,11 +11,12 @@
   "--color-background": ["#E0E8F4","#020616"],
   "--color-background-message": ["#ffffff","#1A1F29"],
   "--color-background-right-info": ["#ffffff","#020616"],
+  "--color-background-action-message": ["#ffffff","#020616"],
   "--pattern-color-background": ["transparent","#020616"],
   "--color-background-profile": ["#ffffff","#0E1424"],
-  "--color-background-composer": ["#ffffff","#1A1F29"],
+  "--color-background-composer": ["#BECCE0","#1A1F29"],
   "--color-background-select": ["#ffffff","#1A1F29"],
-  "--color-background-compact-menu": ["#E0E8F4", "#1D2233"],
+  "--color-background-compact-menu": ["#ffffff", "#1D2233"],
   "--color-web-app-browser": ["#FFFFFFBB", "#0303038F"],
   "--color-background-compact-menu-reactions": ["#FFFFFFEB", "#212121DD"],
   "--color-background-compact-menu-hover": ["#00000011", "#00000066"],
@@ -84,6 +86,7 @@
   "--color-borders-read-story": ["#C4C9CC", "#737373"],
   "--color-background-menu-separator": ["#0000001a", "#ffffff1a"],
   "--color-hover-overlay": ["#00000006", "#ffffff06"],
-  "--color-background-second": ["#E0E8F4", "#0E1323"]
+  "--color-background-second": ["#E0E8F4", "#0E1323"],
+  "--color-background-third": ["#BECCE0", "#020616"]
 
 }

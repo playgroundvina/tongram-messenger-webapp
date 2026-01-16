@@ -44,7 +44,7 @@
   h1 {
     font-size: 1.25rem;
     line-height: 1;
-    color: var(--color-primary);
+    color: var(--color-secondary);
 
 
     @media (min-width: 600px) {
@@ -130,6 +130,7 @@
 
 .auth-button {
   margin-top: 2.5rem;
+  color: var(--color-secondary) !important;
 }
 
 .auth-button + .auth-button {
@@ -226,10 +227,10 @@
         border-radius: 50%;
 
         font-size: 0.875rem;
-        color: black;
+        color: var(--color-text-black);
         font-weight: 600;
 
-        // background: var(--color-primary);
+        background: #7D99D5;
       }
     }
   }

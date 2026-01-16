@@ -9,6 +9,11 @@
   flex-direction: column;
 
   height: 100%;
+  background-color: var(--color-background);
+
+  .profile-info{
+    margin-bottom: 10px;
+  }
 
   > .profile-info > .ChatInfo {
     grid-area: chat_info;
@@ -89,10 +94,13 @@
   display: flex;
   flex: 1;
   flex-direction: column-reverse;
+  margin-left: 0.5rem;
 
   @include mixins.with-vt-type('rightColumn');
 
   .TabList {
+    border-top-left-radius: var(--border-radius-default);
+    border-top-right-radius: var(--border-radius-default);
     z-index: 1;
     background: var(--color-background-right-info);
   }

@@ -225,9 +225,9 @@
 
       border-radius: var(--border-radius-messages);
 
-      color: white;
+      color: vảr(--color-text);
 
-      background-color: var(--action-message-bg);
+      background-color: var(--color-background-action-message);
 
       body.is-ios &,
       body.is-macos & {
