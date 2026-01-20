@@ -7,7 +7,7 @@ import type { SharedSettings } from '../../../../global/types';
 import { selectSharedSettings } from '../../../../global/selectors/sharedState';
 
 import useOldLang from '../../../../hooks/useOldLang';
-import { translateMessageText } from '../hooks/useTranslate';
+import { AiTranslateText } from '../hooks/useTranslate';
 
 import Button from '../../../ui/Button';
 import ButtonList from '../../../ui/ButtonList';
@@ -111,7 +111,7 @@ const TranslationBox: FC<TranslateBoxProps & StateProps> = ({
     const translate = async () => {
       try {
         setTranslateLoading(true);
-        const resTranslate = await translateMessageText(
+        const resTranslate = await AiTranslateText(
           translateValue,
           JSON.parse(LangSelected).value,
         );
